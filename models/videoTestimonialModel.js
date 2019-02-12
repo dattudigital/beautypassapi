@@ -19,6 +19,7 @@ videoTestimonialModel.prototype.create = function (data, callback) {
     var con1 = this.dbMySQL;
     var con2 = this.dbMySQL;
     var con3 = this.dbMySQL;
+    var con4 = this.dbMySQL;
     if (!data.testimonial_id) {
         activity_code = data.activity_code;
         delete data.activity_code;
@@ -42,7 +43,18 @@ videoTestimonialModel.prototype.create = function (data, callback) {
                                 if (Object.keys(r).length == 1) {
                                     _data.points = r[0].activity_points;
                                     con3.connectionWriter.query('insert into user_rewards SET ?', _data, function (_err, result) {
-                                        callback(err, data);
+                                        if (err) {
+                                            callback(err, data);
+                                        } else {
+                                            con4.connectionReader.query('select sum(points) as pointsum,SUM(debit) as debit from user_rewards where user_id ="' + data.user_id + ' and studio_id = ' + data.studio_id, function (error, reward_points) {
+                                                if (error) {
+                                                    callback(err, data);
+                                                } else {
+                                                    data.rewards_points = reward_points[0].pointsum - reward_points[0].debit;;
+                                                    callback(err, data);
+                                                }
+                                            })
+                                        }
                                     });
                                 } else {
                                     callback(err, data);

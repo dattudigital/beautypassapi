@@ -9,15 +9,7 @@ function writtenTestimonialModel() {
 
 writtenTestimonialModel.prototype.getAll = function (params, callback) {
     console.log("*******came *****");
-    var sql = '';
-    if (params) {
-        if (params.query) {
-            if (params.query.rating) {
-                sql = ' where wt.rating_5 < 3 ';
-            }
-        }
-    }
-    this.dbMySQL.connectionReader.query('select wt.`*`,u.locationName,u.studioName,e.employee_id,(SELECT CONCAT(e.emp_firstname , " ", e.emp_lastname ) FROM employee e  WHERE e.employee_id = wt.updatedempid) AS empname from written_testimonials wt left join  users u on wt.user_id = u.mindbody_id and wt.studio_id = u.studioid left join employee e on wt.updatedempid = e.employee_id ' + sql + ' GROUP BY wt.testimonial_id  order by wt.testimonial_createddate DESC', function (err, results) {
+    this.dbMySQL.connectionReader.query('select wt.`*`,u.locationName,u.studioName,e.employee_id,(SELECT CONCAT(e.emp_firstname , " ", e.emp_lastname ) FROM employee e  WHERE e.employee_id = wt.updatedempid) AS empname from written_testimonials wt left join  users u on wt.user_id = u.mindbody_id and wt.studio_id = u.studioid left join employee e on wt.updatedempid = e.employee_id  GROUP BY wt.testimonial_id  order by wt.testimonial_createddate DESC', function (err, results) {
         console.log(err, results);
         callback(err, results);
     });
@@ -27,6 +19,7 @@ writtenTestimonialModel.prototype.create = function (data, callback) {
     var con1 = this.dbMySQL;
     var con2 = this.dbMySQL;
     var con3 = this.dbMySQL;
+    var con4 = this.dbMySQL;
     if (!data.testimonial_id) {
         // async.waterfall([
         // 	function (callback) {
@@ -103,7 +96,18 @@ writtenTestimonialModel.prototype.create = function (data, callback) {
                                     console.log("Points");
                                     console.log(_data);
                                     con3.connectionWriter.query('insert into user_rewards SET ?', _data, function (_err, result) {
-                                        callback(err, data);
+                                        if (err) {
+                                            callback(err, data);
+                                        } else {
+                                            con4.connectionReader.query('select sum(points) as pointsum,SUM(debit) as debit from user_rewards where user_id ="' + data.user_id + ' and studio_id = ' + data.studio_id, function (error, reward_points) {
+                                                if (error) {
+                                                    callback(err, data);
+                                                } else {
+                                                    data.rewards_points = reward_points[0].pointsum - reward_points[0].debit;;
+                                                    callback(err, data);
+                                                }
+                                            })
+                                        }
                                     });
                                 } else {
                                     callback(err, data);

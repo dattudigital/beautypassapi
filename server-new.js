@@ -19,8 +19,8 @@ app.use(function (req, res, next) {
     next();
 });
 
-// app.use(cors())
-// app.options('*', cors())
+app.use(cors())
+app.options('*', cors())
 
 app.use(function (req, res, next) {
     console.log("************8");

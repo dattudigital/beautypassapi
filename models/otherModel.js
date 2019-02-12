@@ -90,7 +90,7 @@ otherModel.prototype.verifyOTPUser = function (req, res) {
         if (Object.keys(_result).length) {
             var OTP = Math.floor(100000 + Math.random() * 900000);
             var URL = "https://www.experttexting.com/ExptRestApi/sms/json/Message/Send?username=tbg&password=Shapes@123&api_key=qg85n5d4jgy2rlh&FROM=15626668977&to=+1" + req.body.mobile + "&text= OTP For Your Account Creation Mobile Verification In BEAUTY PASS Is : " + OTP;
-           // var URL = "http://raartech.com/?username=digital&password=digital@123&api_key=e5368bbe63f35ee544a442ae2435d608ffd7f322&sender=Drupay&mobile=" + req.body.mobile + "&message= Login OTP " + OTP + " For Shapes Brow Bar ";
+            // var URL = "http://raartech.com/?username=digital&password=digital@123&api_key=e5368bbe63f35ee544a442ae2435d608ffd7f322&sender=Drupay&mobile=" + req.body.mobile + "&message= Login OTP " + OTP + " For Shapes Brow Bar ";
             REQUEST({
                 url: URL,
                 method: 'GET',
@@ -203,7 +203,7 @@ otherModel.prototype.getRewardPoint = function (req, res) {
 };
 
 otherModel.prototype.graphs = function (req, res) {
-    this.dbMySQL.connectionReader.query("select sum(points) as total,DAY(dateCreated) as day from user_rewards where dateCreated BETWEEN NOW() - INTERVAL 30 DAY AND NOW()  GROUP by  DATE(dateCreated)", function (_err, _result) {
+    this.dbMySQL.connectionReader.query("(select DAYNAME(coupon_createddate) as dayname,DAY(coupon_createddate) as day,count(couponassigned_id) as count from couponsassigned where coupon_createddate >= now()-interval 1 month GROUP BY DATE(coupon_createddate)) order by coupon_createddate desc", function (_err, _result) {
         if (_err || Object.keys(_result).length == 0) {
             return res.status(200).json({ status: false, data: [], err: _err, message: "No Data Found" })
         } else {
@@ -294,11 +294,11 @@ otherModel.prototype.login = function (req, res) {
                 if (error) {
                     return res.status(200).json({ 'status': false, 'message': 'Record Update Error', 'err': error, data: [] })
                 } else {
-                    con2.connectionReader.query('select sum(points) as reward_points from user_rewards where user_id ="' + mindbody_id + '"', function (error, reward_points, fields) {
+                    con2.connectionReader.query('select sum(points) as pointsum,SUM(debit) as debit from user_rewards where user_id ="' + mindbody_id + ' and studio_id = ' + req.body.studioid, function (error, reward_points, fields) {
                         req.body.user_id = user_results[0].user_id;
                         req.body.mindbody_id = mindbody_id;
                         req.body.referral_code = user_results[0].referral_code;
-                        req.body.rewards_points = reward_points[0].reward_points;
+                        req.body.rewards_points = reward_points[0].pointsum - reward_points[0].debit;;
                         return res.status(200).json({ 'status': true, 'message': 'Record Update', 'data': req.body })
                     })
                 }
