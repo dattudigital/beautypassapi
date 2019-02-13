@@ -25,10 +25,16 @@ refferActivitieModel.prototype.create = function (data, callback) {
         });
     } else {
         this.dbMySQL.connectionWriter.query('UPDATE rewardpoint SET ? WHERE rewardpoint_id = ' + data.rewardpoint_id, data,
-            function (err, results) {                
+            function (err, results) {
                 callback(err, data);
             });
     }
+};
+
+refferActivitieModel.prototype.remove = function (id, callback) {
+    this.dbMySQL.connectionWriter.query('DELETE FROM reff_activities WHERE rewardpoint_id=' + id, function (err, results) {
+        callback(err, results);
+    });
 };
 
 module.exports = refferActivitieModel;

@@ -7,4 +7,6 @@ router.get('/', fc.getAll.bind(fc));
 
 router.post('/', fc.create.bind(fc));
 
+router.delete('/:id', btc.remove.bind(btc));
+
 module.exports = router;

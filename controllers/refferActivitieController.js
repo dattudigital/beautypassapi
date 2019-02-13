@@ -15,4 +15,8 @@ refferActivitieController.prototype.create = function (req, res, next) {
     controllerUtil.create(vtm, req, res, next);
 };
 
+refferActivitieController.prototype.remove = function (req, res, next) {
+    controllerUtil.remove(vtm, req, res, next);
+};
+
 module.exports = refferActivitieController;

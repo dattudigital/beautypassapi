@@ -15,4 +15,8 @@ faqController.prototype.create = function (req, res, next) {
     controllerUtil.create(fm, req, res, next);
 };
 
+faqController.prototype.remove = function (req, res, next) {
+    controllerUtil.remove(fm, req, res, next);
+};
+
 module.exports = faqController;

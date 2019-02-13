@@ -78,9 +78,7 @@ ControllerUtilFunction.prototype.remove = function (commonModel, req, res, next)
             res.status(200).json({ status: false, data: [], err: 'Record Not Found To Delete' });
         } else {
             rc.delete(req.baseUrl);
-            res.status(200).send(JSON.stringify({
-                message: ' 1 record deleted.'
-            }));
+            res.status(200).json({ status: true, data: "Record Deleted Successfully" });
         }
     });
 };

@@ -15,4 +15,8 @@ rewardPointController.prototype.create = function (req, res, next) {
     controllerUtil.create(ram, req, res, next);
 };
 
+rewardPointController.prototype.remove = function (req, res, next) {
+    controllerUtil.remove(ram, req, res, next);
+};
+
 module.exports = rewardPointController;

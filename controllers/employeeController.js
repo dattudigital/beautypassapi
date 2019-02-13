@@ -15,4 +15,8 @@ employeeController.prototype.create = function (req, res, next) {
     controllerUtil.create(em, req, res, next);
 };
 
+employeeController.prototype.remove = function (req, res, next) {
+    controllerUtil.remove(em, req, res, next);
+};
+
 module.exports = employeeController;

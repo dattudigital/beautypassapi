@@ -7,4 +7,6 @@ router.get('/', rpc.getAll.bind(rpc));
 
 router.post('/', rpc.create.bind(rpc));
 
+router.delete('/:id', rpc.remove.bind(rpc));
+
 module.exports = router;

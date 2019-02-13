@@ -28,4 +28,10 @@ employeeModel.prototype.create = function (data, callback) {
     }
 };
 
+employeeModel.prototype.remove = function (id, callback) {
+    this.dbMySQL.connectionReader.query('DELETE FROM employee WHERE employee_id=' + id, function (err, results) {
+        callback(err, results);
+    });
+};
+
 module.exports = employeeModel;

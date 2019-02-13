@@ -70,4 +70,10 @@ beautyTipModel.prototype.create = function (data, callback) {
     })
 };
 
+beautyTipModel.prototype.remove = function (id, callback) {
+    this.dbMySQL.connectionReader.query('DELETE FROM beauty_tips WHERE  tip_id=' + id, function (err, results) {
+        callback(err, results);
+    });
+};
+
 module.exports = beautyTipModel;

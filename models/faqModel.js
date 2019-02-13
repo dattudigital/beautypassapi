@@ -30,4 +30,10 @@ faqModel.prototype.create = function (data, callback) {
     }
 };
 
+faqModel.prototype.remove = function (id, callback) {
+    this.dbMySQL.connectionReader.query('DELETE FROM faqs WHERE faq_id=' + id, function (err, results) {
+        callback(err, results);
+    });
+};
+
 module.exports = faqModel;
