@@ -7,6 +7,6 @@ router.get('/', mcc.getAll.bind(mcc));
 
 router.post('/', mcc.create.bind(mcc));
 
-router.delete('/:id', btc.remove.bind(btc));
+router.delete('/:id', mcc.remove.bind(mcc));
 
 module.exports = router;
