@@ -5,10 +5,10 @@ var config = require("./config/config.json");
 var bodyParser = require('body-parser');
 var methodOverride = require('method-override');
 var cors = require('cors')
-
-app.listen(3001, function () {
+console.log(config.PORT)
+app.listen(config.PORT, function () {
     console.log("shapes")
-    console.log("3001 port")
+    console.log(config.PORT + "port")
 });
 
 app.use(function (req, res, next) {

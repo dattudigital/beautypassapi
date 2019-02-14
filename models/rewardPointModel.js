@@ -32,7 +32,7 @@ refferActivitieModel.prototype.create = function (data, callback) {
 };
 
 refferActivitieModel.prototype.remove = function (id, callback) {
-    this.dbMySQL.connectionWriter.query('DELETE FROM reff_activities WHERE rewardpoint_id=' + id, function (err, results) {
+    this.dbMySQL.connectionWriter.query('DELETE FROM rewardpoint WHERE rewardpoint_id=' + id, function (err, results) {
         callback(err, results);
     });
 };

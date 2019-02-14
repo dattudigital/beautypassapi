@@ -28,8 +28,8 @@ mindbodyCouponModel.prototype.create = function (data, callback) {
     }
 };
 
-mindbodyCouponModel.prototype.getAll = function (id, callback) {
-    this.dbMySQL.connectionReader.query('DELETE FROM mindbody_coupons WHERE coupons_id=' + id, function (err, results) {
+mindbodyCouponModel.prototype.remove = function (id, callback) {
+    this.dbMySQL.connectionWriter.query('DELETE FROM mindbody_coupons WHERE coupons_id=' + id, function (err, results) {
         callback(err, results);
     });
 };

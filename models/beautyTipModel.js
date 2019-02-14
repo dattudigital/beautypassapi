@@ -2,6 +2,7 @@ var connection = require('../utils/db/mysqlConnection');
 var async = require("async");
 var fs = require("fs");
 var Path = require("path");
+var config = require("../config//config.json");
 
 function beautyTipModel() {
     this.dbMySQL = connection;
@@ -30,8 +31,8 @@ beautyTipModel.prototype.create = function (data, callback) {
                     callback(data);
                 } else {
                     var buf = Buffer.from(data.tip_img, 'base64');
-                    fs.writeFile(Path.join('/var/server-new/uploads/' + data.profile_name), buf, function (error) {
-                        data.tip_img = "http://ec2-52-66-45-172.ap-south-1.compute.amazonaws.com:3001/" + data.profile_name;
+                    fs.writeFile(Path.join(config.FOLDER_PATH + data.profile_name), buf, function (error) {
+                        data.tip_img = config.INSTANCE_URL + data.profile_name;
                         callback(data)
                     });
                 }
@@ -71,7 +72,7 @@ beautyTipModel.prototype.create = function (data, callback) {
 };
 
 beautyTipModel.prototype.remove = function (id, callback) {
-    this.dbMySQL.connectionReader.query('DELETE FROM beauty_tips WHERE  tip_id=' + id, function (err, results) {
+    this.dbMySQL.connectionWriter.query('DELETE FROM beauty_tips WHERE  tip_id=' + id, function (err, results) {
         callback(err, results);
     });
 };

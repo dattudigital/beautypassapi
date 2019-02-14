@@ -31,9 +31,9 @@ refferActivitieModel.prototype.create = function (data, callback) {
     }
 };
 
-refferActivitieModel.prototype.getAll = function (id, callback) {
+refferActivitieModel.prototype.remove = function (id, callback) {
     console.log("*******came *****");
-    this.dbMySQL.connectionReader.query('DELETE FROM reff_activities WHERE activity_id=' + id, function (err, results) {
+    this.dbMySQL.connectionWriter.query('DELETE FROM reff_activities WHERE activity_id=' + id, function (err, results) {
         callback(err, results);
     });
 };
