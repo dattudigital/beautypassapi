@@ -7,10 +7,9 @@ function ControllerUtilFunction() {
 ControllerUtilFunction.prototype.getAll = function (commonModel, req, res, next, callback) {
     var params = {};
     params.query = req.query;
-    console.log("req.base url");
-    console.log(req.baseUrl);
-    console.log()
-    rc.get(req.baseUrl, function (err, replay) {
+    console.log("**************")
+    console.log(req.originalUrl)
+    rc.get(req.originalUrl, function (err, replay) {
         if (replay) {
             console.log("************* REDIS")
             res.status(200).json({ status: true, data: replay });
@@ -23,7 +22,7 @@ ControllerUtilFunction.prototype.getAll = function (commonModel, req, res, next,
                 if (!Object.keys(data).length) {
                     res.status(200).json({ data: [], status: false });
                 } else {
-                    rc.set(req.baseUrl, data);
+                    rc.set(req.originalUrl, data);
                     res.status(200).json({ status: true, data: data });
                 }
             });
@@ -52,7 +51,7 @@ ControllerUtilFunction.prototype.create = function (commonModel, req, res, next,
             res.status(500).send({ status: false, data: [], err: err });
         } else {
             // data.id = result.insertId;
-            rc.delete(req.baseUrl);
+            rc.delete(req.originalUrl);
             res.status(200).json({ status: true, data: data });
         }
     });
@@ -64,7 +63,7 @@ ControllerUtilFunction.prototype.update = function (commonModel, req, res, next,
         if (err) {
             res.status(500).json({ status: false, data: [], err: err });
         } else {
-            rc.delete(req.baseUrl);
+            rc.delete(req.originalUrl);
             res.status(200).json({ status: true, data: data });
         }
     });
@@ -77,7 +76,7 @@ ControllerUtilFunction.prototype.remove = function (commonModel, req, res, next)
         } else if (result.affectedRows <= 0) {
             res.status(200).json({ status: false, data: [], err: 'Record Not Found To Delete' });
         } else {
-            rc.delete(req.baseUrl);
+            rc.delete(req.originalUrl);
             res.status(200).json({ status: true, data: "Record Deleted Successfully" });
         }
     });

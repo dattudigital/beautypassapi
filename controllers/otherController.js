@@ -124,4 +124,8 @@ otherController.prototype.broadcastMembershipSendSms = function (req, res, next)
     mpm.broadcastMembershipSendSms(req, res);
 };
 
+otherController.prototype.mobileTokenGenerate = function (req, res, next) {
+    mpm.mobileTokenGenerate(req, res);
+};
+
 module.exports = otherController;

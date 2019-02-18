@@ -13,7 +13,12 @@ employeeModel.prototype.getAll = function (params, callback) {
 employeeModel.prototype.create = function (data, callback) {
     if (!data.employee_id) {
         this.dbMySQL.connectionWriter.query('insert into employee SET ?', data, function (err, result) {
+            console.log(err.errno);
             if (err) {
+                if (err.errno == 1062) {
+                    err.status = 1;
+                    err.result = "Employee Already Exist's"
+                }
                 callback(err, data);
             } else {
                 data.employee_id = result.insertId;
@@ -22,7 +27,7 @@ employeeModel.prototype.create = function (data, callback) {
         });
     } else {
         this.dbMySQL.connectionWriter.query('UPDATE employee SET ? WHERE employee_id = ' + data.employee_id, data,
-            function (err, results) {                
+            function (err, results) {
                 callback(err, data);
             });
     }

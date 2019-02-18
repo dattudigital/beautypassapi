@@ -4,7 +4,7 @@ var faqController = require('../controllers/faqController');
 var fc = new faqController();
 var middleAuth = require('../utils/auth/tokenAuth');
 
-router.get('/', middleAuth, fc.getAll.bind(fc));
+router.get('/', fc.getAll.bind(fc));
 
 router.post('/', fc.create.bind(fc));
 

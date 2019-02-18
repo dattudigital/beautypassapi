@@ -1,5 +1,6 @@
 function unAuth(res) {
     res.status(403).json({
+        status: false,
         error: {
             message: 'Not Auth'
         }
@@ -8,7 +9,7 @@ function unAuth(res) {
 
 module.exports.isSuper = function (req, res, next) {
     if (req.decode) {
-        if (req.decode.role == 1) {
+        if (req.decode.sb_u_role == 1) {
             next();
             return;
         }
@@ -16,29 +17,9 @@ module.exports.isSuper = function (req, res, next) {
     unAuth(res);
 }
 
-module.exports.isBranchManager = function (req, res, next) {
+module.exports.isCandidate = function (req, res, next) {
     if (req.decode) {
-        if (req.decode.role == 2) {
-            next();
-            return;
-        }
-    }
-    unAuth(res);
-}
-
-module.exports.isEmployee = function (req, res, next) {
-    if (req.decode) {
-        if (req.decode.role == 3) {
-            next();
-            return;
-        }
-    }
-    unAuth(res);
-}
-
-module.exports.isStylist = function (req, res, next) {
-    if (req.decode) {
-        if (req.decode.role == 4) {
+        if (req.decode.sb_u_role == 2) {
             next();
             return;
         }

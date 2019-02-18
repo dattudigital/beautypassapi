@@ -2,6 +2,8 @@ var connection = require('../utils/db/mysqlConnection');
 var notification = require('../utils/notification/mobile-notification');
 const REQUEST = require('request');
 var async = require("async");
+var jwt = require('jsonwebtoken');
+app.set('superSecret', 'shapesBrow');
 var redis = require("../utils/cache/redisCache"),
     rc,
     mn;
@@ -18,7 +20,13 @@ otherModel.prototype.webLogin = function (req, res) {
         if (err || Object.keys(results).length == 0) {
             res.status(200).json({ status: false, data: [], err: err, message: "You Are Not Register" });
         } else {
-            res.status(200).json({ status: true, data: results });
+            results.sb_u_role = 1;
+            var token;
+            token = jwt.sign({ data: results }, app.get('superSecret'), {
+                expiresIn: 60 * 60 * 1000
+            });
+            delete req.body.sb_u_role;
+            res.status(200).json({ status: true, data: results, token: token });
         }
     });
 };
@@ -294,11 +302,13 @@ otherModel.prototype.login = function (req, res) {
                 if (error) {
                     return res.status(200).json({ 'status': false, 'message': 'Record Update Error', 'err': error, data: [] })
                 } else {
-                    con2.connectionReader.query('select sum(points) as pointsum,SUM(debit) as debit from user_rewards where user_id ="' + mindbody_id + ' and studio_id = ' + req.body.studioid, function (error, reward_points, fields) {
+                    con2.connectionReader.query('select sum(points) as pointsum,SUM(debit) as debit from user_rewards where user_id ="' + mindbody_id + '" and studio_id = ' + req.body.studioid, function (error, reward_points, fields) {
                         req.body.user_id = user_results[0].user_id;
                         req.body.mindbody_id = mindbody_id;
                         req.body.referral_code = user_results[0].referral_code;
+                        req.body.sb_u_role = 2;
                         req.body.rewards_points = reward_points[0].pointsum - reward_points[0].debit;;
+
                         return res.status(200).json({ 'status': true, 'message': 'Record Update', 'data': req.body })
                     })
                 }
@@ -306,15 +316,13 @@ otherModel.prototype.login = function (req, res) {
         } else {
             var referral_code = generateRandAlphaNumStr(10);
             req.body.referral_code = referral_code;
-            console.log("***************")
-            console.log(req.body);
             con1.connectionWriter.query('insert into users SET ?', req.body, function (error, results) {
-                console.log(error, results)
                 if (error) {
                     return res.status(200).json({ 'status': false, 'message': 'Record Insert Error', 'err': error, data: [] })
                 } else {
                     req.body.mindbody_id = mindbody_id;
                     req.body.user_id = results.insertId;
+                    req.body.sb_u_role = 2;
                     con2.connectionReader.query('select * from reff_activities where activity_code = "456729"', function (e, r) {
                         if (Object.keys(r).length == 1) {
                             var data = {
@@ -632,6 +640,20 @@ otherModel.prototype.broadcastMembershipSendSms = function (req, res) {
         });
     } else {
         res.send({ 'status': false, 'data': "Please Provide Studio Id And Message" })
+    }
+};
+
+
+otherModel.prototype.mobileTokenGenerate = function (req, res) {
+    if (req.body.U_n == "shape1112" && req.body.Pass_w == "brow__m") {
+        var token, data = {};
+        data.sb_u_role = 1
+        token = jwt.sign({ data: req.body }, app.get('superSecret'), {
+            expiresIn: 60 * 60 * 1000
+        });
+        res.send({ status: true, token: token })
+    } else {
+        res.send({ status: false, token: [] })
     }
 };
 
