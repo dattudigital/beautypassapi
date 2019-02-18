@@ -7,14 +7,20 @@ var middleAuth = function (req, res, next) {
     headerUsername = req.headers['username'];
     headerPassword = req.headers['password'];
     token = req.headers['x-access-token'];
+    console.log("******** header *************")
+    console.log(req.headers['username']);
+    console.log(req.headers['password']);
+    console.log(req.headers['x-access-token']);
     if (headerUsername == "sh_br_ba" && headerPassword == "sh@sh.com" && token) {
         jwt.verify(token, app.get('superSecret'), function (err, decode) {
             if (err) {
                 return res.json({ status: false, status: 401, message: 'Auth Is Fail' })
             } else {
-                console.log(decode.data.sb_u_role)
+                console.log(decode.data)
                 req.decode = decode;
-                req.decode.sb_u_role = decode.data.sb_u_role;
+                req.decode.sb_u_role = decode.data.sb_u_role;                
+                console.log(req.decode)
+                console.log("*************")
                 next();
             }
         })

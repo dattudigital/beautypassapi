@@ -11,7 +11,6 @@ router.use('/mindbody-packages',require('./mindbodyPackageRouter'));
 router.use('/beauty-tips',require('./beautyTipRouter'));
 router.use('/employees',require('./employeeRouter'));
 router.use('/faqs',require('./faqRouter'));
-router.use('/userssss',require('./userRouter'));
 router.use('/',require('./otherRouter'));
 
 module.exports = router;

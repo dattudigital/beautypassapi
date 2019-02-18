@@ -5,7 +5,21 @@ function employeeModel() {
 }
 
 employeeModel.prototype.getAll = function (params, callback) {
-    this.dbMySQL.connectionReader.query(' select * from employee where emp_status=1 ', function (err, results) {
+    var sql = '';
+    var count = 0;
+    if (params.query) {      
+        if (params.query.status) {
+            if (count == 0) {
+                count++
+                sql = sql + " where ";
+            } else {
+                sql = sql + " and ";
+            }
+            sql = sql + " emp_status = 1";
+        }
+    }
+    console.log(params)
+    this.dbMySQL.connectionReader.query(' select * from employee '+ sql, function (err, results) {
         callback(err, results);
     });
 };
@@ -13,7 +27,6 @@ employeeModel.prototype.getAll = function (params, callback) {
 employeeModel.prototype.create = function (data, callback) {
     if (!data.employee_id) {
         this.dbMySQL.connectionWriter.query('insert into employee SET ?', data, function (err, result) {
-            console.log(err.errno);
             if (err) {
                 if (err.errno == 1062) {
                     err.status = 1;

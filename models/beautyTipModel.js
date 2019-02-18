@@ -10,14 +10,31 @@ function beautyTipModel() {
 
 beautyTipModel.prototype.getAll = function (params, callback) {
     var sql = '';
+    var count = 0;
     if (params.query) {
         if (params.query.type) {
-            sql = sql + " and tip_type = " + params.query.type;
+            if (count == 0) {
+                count++
+                sql = sql + " where ";
+            } else {
+                sql = sql + " and ";
+            }
+            sql = sql + " tip_type = " + params.query.type;
+        }
+
+        if (params.query.status) {
+            if (count == 0) {
+                count++
+                sql = sql + " where ";
+            } else {
+                sql = sql + " and ";
+            }
+            sql = sql + " rec_status = 1";
         }
     }
     console.log(params)
-    console.log('select * from beauty_tips where rec_status = 1 ' + sql)
-    this.dbMySQL.connectionReader.query('select * from beauty_tips where rec_status = 1 ' + sql, function (err, results) {
+    console.log('select * from beauty_tips ' + sql)
+    this.dbMySQL.connectionReader.query('select * from beauty_tips ' + sql, function (err, results) {
         callback(err, results);
     });
 };
