@@ -8,9 +8,7 @@ function videoTestimonialModel() {
 }
 
 videoTestimonialModel.prototype.getAll = function (params, callback) {
-    console.log("*******came *****");
     this.dbMySQL.connectionReader.query('select t.testimonial_id,t.description,t.video,t.user_id,t.likes,t.video_thumbnail,t.fullname,t.rec_status,u.locationName,u.studioName,e.employee_id,(SELECT CONCAT(e.emp_firstname , " ", e.emp_lastname ) FROM employee e  WHERE e.employee_id = t.updatedempid) AS empname   from testimonials t left join users u on t.user_id = u.studioid and t.studio_id = u.studioid left join employee e on t.updatedempid = e.employee_id  order by t.likes DESC', function (err, results) {
-        console.log(err, results);
         callback(err, results);
     });
 };
@@ -30,7 +28,6 @@ videoTestimonialModel.prototype.create = function (data, callback) {
                 data.testimonial_id = results.insertId;
                 setTimeout(function () {
                     con1.connectionReader.query('select * from user_rewards where user_id = ' + data.user_id + ' and studio_id = ' + data.studio_id + ' and activity_code = ' + activity_code, function (__err, __result) {
-                        console.log(__err);
                         if (Object.keys(__result).length == 0) {
                             var _data = {
                                 studio_id: data.studio_id,
@@ -61,8 +58,6 @@ videoTestimonialModel.prototype.create = function (data, callback) {
                                 }
                             })
                         } else {
-                            console.log("(((((((((((((((((data1")
-                            console.log(data);
                             callback(err, data);
                         }
                     })
@@ -81,7 +76,6 @@ videoTestimonialModel.prototype.create = function (data, callback) {
 
 videoTestimonialModel.prototype.getMyVideoTestimonial = function (req, res) {
     this.dbMySQL.connectionReader.query(' select * from testimonials where user_id = ' + req.params.id + ' and studio_id = ' + req.params.studioid + ' order by created_date DESC ', function (err, results) {
-        console.log(err, results)
         if (err || Object.keys(results).length == 0) {
             return res.status(200).json({ status: false, data: [], message: "No Video Testimonials", err: err })
         } else {

@@ -16,7 +16,6 @@ function otherModel() {
 
 
 otherModel.prototype.webDashbaord = function (req, res) {
-    console.log("came inside (((((((((((((((********");
     this.dbMySQL.connectionReader.query('SELECT COUNT(user_id) as femaletotal FROM users WHERE gender!="M" OR gender!="Male";SELECT COUNT(user_id) as maletotal FROM users WHERE gender="M" OR gender="Male";SELECT count(*) as totaluser FROM users;select count(*) as totalbeautytip from beauty_tips where rec_status  =  1;select count(*) as totalcoupon from mindbody_coupons where coupons_status  =  1;select count(*) as writtentotal from written_testimonials where  status = 1 ;select count(*) as videototal from testimonials where  rec_status = 1 ;SELECT count(*) as refferaltotal FROM reff_activities  where activity_status = 1;select count(*) as perktotal from rewardpoint where rewardpoint_status = 1;SELECT user_id,fullname,email_id,mobile,gender,mindbody_id FROM users ORDER BY user_id DESC LIMIT 10', function (err, results) {
         if (err || Object.keys(results).length == 0) {
             res.status(200).json({ status: false, data: [], err: err, message: "You Are Not Register" });
@@ -43,8 +42,6 @@ otherModel.prototype.mobileDashbaord = function (req, res) {
         if (err || Object.keys(results).length == 0) {
             res.status(200).json({ status: false, data: [], err: err, message: "You Are Not Register" });
         } else {
-            console.log("*********")
-            console.log(results[3])
             if (!results[3][0].pointsum) {
                 results[3][0].pointsum = 0
             }
@@ -109,8 +106,6 @@ otherModel.prototype.checkValidUser = function (req, res) {
 };
 
 otherModel.prototype.userSearch = function (req, res) {
-    console.log("came inside (((((((((((((((********");
-    
     this.dbMySQL.connectionReader.query("select  *,concat(IF(first_name IS NULL,'',first_name),' ',IF(last_name IS NULL,'',last_name),' ',IF(mindbody_id IS NULL,'',mindbody_id),' - ', IF(studioName IS NULL,'',studioName), ' - ', IF(location IS NULL,'',location)) as alldetails from users where email_id like '%" + req.query.name + "%' or mindbody_id like '%" + req.query.name + "%' or mobile like '%" + req.query.name + "%'", function (_err, _result) {
         if (_err || Object.keys(_result).length == 0) {
             return res.status(200).json({ status: false, data: [], err: _err, message: "No User Found" })
@@ -121,7 +116,6 @@ otherModel.prototype.userSearch = function (req, res) {
 };
 
 otherModel.prototype.userPoints = function (req, res) {
-    console.log("came inside (((((((((((((((********");
     this.dbMySQL.connectionWriter.query('insert into user_rewards SET ?', req.body, function (_err, _result) {
         if (_err || Object.keys(_result).length == 0) {
             return res.status(200).json({ status: false, data: [], err: _err, message: "No User Found" })
@@ -148,7 +142,7 @@ otherModel.prototype.checkCoupon = function (req, res) {
             }
             mn.notification(data.reward_for, 'Buy Coupon', data.user_id, data.studio_id);
             // sendNotificationToMe(data.reward_for, 'Buy Coupon', data.user_id);
-            // rc.delete('/mindbody-coupons');
+            rc.delete('/mindbody-coupons');
             con1.connectionWriter.query('insert into user_rewards SET ?', data);
             var data = {
                 user_id: req.body.mindbody_id,
@@ -220,9 +214,6 @@ otherModel.prototype.pageLimitVideoTestimonials = function (req, res) {
 };
 
 otherModel.prototype.pageLimitWrittenTestimonials = function (req, res) {
-    console.log("written testimonials ***************");
-    console.log(req.query.limit)
-    console.log('call writtentestimonials(?)', [req.query.limit]);
     this.dbMySQL.connectionReader.query('call writtentestimonials(?)', [req.query.limit], function (_err, _result) {
         if (_err || Object.keys(_result).length == 0) {
             return res.status(200).json({ status: false, data: [], err: _err, message: "No Written Testimonials" })
@@ -247,8 +238,6 @@ otherModel.prototype.users = function (req, res) {
 };
 
 otherModel.prototype.couponUsed = function (req, res) {
-    console.log("Came new")
-    console.log('UPDATE couponsassigned SET coupon_status="Used", status="0" WHERE coupons_id = ' + req.params.id);
     this.dbMySQL.connectionWriter.query('UPDATE couponsassigned SET coupon_status="Used", status="0" WHERE coupons_id = ' + req.params.id, function (_err, _result) {
         if (_err || Object.keys(_result).length == 0) {
             return res.status(200).json({ status: false, data: [], err: _err, message: "No Coupon Found" })
@@ -342,7 +331,7 @@ otherModel.prototype.bulkUploadCoupon = function (req, res) {
     var errData = [];
     var count = 1;
     var con1 = this.dbMySQL;
-    // rc.delete('/mindbody-coupons');
+    rc.delete('/mindbody-coupons');
     async.forEach(req.body, function (item, callback) {
         con1.connectionWriter.query("INSERT INTO `mindbody_coupons` ( `coupons_number`, `coupons_for`,`createdempid`,`coupons_status`) VALUES ( " + JSON.stringify(item["coupon num"]) + ", " + JSON.stringify(item["coupon point"]) + "," + item.empid + ",1)", function (err, result) {
             if (err) {
@@ -359,7 +348,8 @@ otherModel.prototype.bulkUploadCoupon = function (req, res) {
 };
 
 otherModel.prototype.getUserRewardHistory = function (req, res) {
-    this.dbMySQL.connectionReader.query('SELECT ur.*,u.first_name,u.last_name,u.fullname,u.email_id,u.mobile,u.dob,u.location,u.locationName,u.studioid,u.studioName,ur.dateCreated as rewarddate FROM user_rewards ur left join users u on ur.user_id = u.mindbody_id and ur.studio_id = u.studioid  where ur.user_id ="' + req.params.user_id + '"    and ur.studio_id = "' + req.params.studioid + '" group by ur.r_id order by ur.dateCreated DESC ', function (_err, _result) {
+    console.log('SELECT *,dateCreated as rewarddate FROM user_rewards  where user_id = "' + req.params.user_id + '"    and studio_id = "' + req.params.studioid + '" group by r_id order by dateCreated DESC ')
+    this.dbMySQL.connectionReader.query('SELECT *,dateCreated as rewarddate FROM user_rewards  where user_id = "' + req.params.user_id + '"    and studio_id = "' + req.params.studioid + '" group by r_id order by dateCreated DESC ', function (_err, _result) {
         if (_err || Object.keys(_result).length == 0) {
             return res.status(200).json({ status: false, data: [], err: _err, message: "No User Found" })
         } else {
@@ -475,8 +465,6 @@ otherModel.prototype.locationids = function (req, res) {
 };
 
 otherModel.prototype.getUserStudioLocation = function (req, res) {
-    console.log("came inside (((((((((((((((********");
-    console.log("select * from users where location = " + req.query.locationid + " and studioid = " + req.query.studioid + " limit " + req.query.limit + ",5")
     this.dbMySQL.connectionReader.query("select * from users where location = " + req.query.locationid + " and studioid = " + req.query.studioid + " limit " + req.query.limit + ",5", function (_err, _result) {
         if (_err || Object.keys(_result).length == 0) {
             return res.status(200).json({ status: false, data: [], err: _err, message: "No User Found" })
@@ -491,20 +479,15 @@ otherModel.prototype.updateTestimonialLike = function (req, res) {
     con2 = this.dbMySQL;
     const testimonial_id = req.body.testimonial_id;
     const user_id = req.body.user_id;
-    console.log('select user_like_id,rec_status from user_testimonial_likes where testimonial_id="' + testimonial_id + '" and  user_id="' + user_id + '" and studio_id = "' + req.body.studio_id + '"')
     this.dbMySQL.connectionReader.query('select user_like_id,rec_status from user_testimonial_likes where testimonial_id="' + testimonial_id + '" and  user_id="' + user_id + '" and studio_id = "' + req.body.studio_id + '"',
         function (error, userResults, fields) {
-            console.log("1111111111111111111");
-            console.log(error)
             if (error) throw error;
             if (Object.keys(userResults).length > 0) {
                 if (userResults[0].rec_status == 1) {
                     con1.connectionWriter.query('update testimonials set likes=likes-1 where testimonial_id="' + testimonial_id + '"',
                         function (error, userUnlikeResults, fields) {
-                            console.log("2222222222222222222");
-                            console.log(error)
                             if (error) throw error;
-                            con2.connectionWriter.query('update user_testimonial_likes set rec_status=0 where user_id="' + user_id + '"',
+                            con2.connectionWriter.query('update user_testimonial_likes set rec_status=0 where user_id="' + user_id + '"  and studio_id = ' + req.body.studio_id + ' and testimonial_id = ' + testimonial_id,
                                 function (error, userUnlikesResults, fields) {
                                     if (error) throw error;
                                     return res.status(200).json({ 'status': true, 'message': 'The testimonial is unliked by you.' });
@@ -513,12 +496,10 @@ otherModel.prototype.updateTestimonialLike = function (req, res) {
                 } else {
                     con1.connectionWriter.query('update testimonials set likes=likes+1 where testimonial_id="' + testimonial_id + '"',
                         function (error, userUnlikeResults, fields) {
-                            console.log("3333333333333333");
-                            console.log(error)
                             if (error) throw error;
                             mn.notification('Your Testimonial Is Liked', 'Testimonial Like', req.body.user_id, req.body.studio_id);
                             // sendNotificationToMe('Your Testimonial Is Liked', 'Testimonial Like', req.body.user_id);
-                            con2.connectionWriter.query('update user_testimonial_likes set rec_status=1 where user_id="' + user_id + '"',
+                            con2.connectionWriter.query('update user_testimonial_likes set rec_status=1 where user_id="' + user_id + '"  and studio_id = ' + req.body.studio_id + ' and testimonial_id = ' + testimonial_id,
                                 function (error, userUnlikesResults, fields) {
                                     if (error) throw error;
                                     return res.status(200).json({ 'status': true, 'message': 'The testimonial is liked by you.' });
@@ -528,14 +509,10 @@ otherModel.prototype.updateTestimonialLike = function (req, res) {
             } else {
                 con1.connectionWriter.query('update testimonials set likes=likes+1 where testimonial_id="' + testimonial_id + '"',
                     function (error, updateResults, fields) {
-                        console.log("444444444444444444");
-                        console.log(error)
                         if (error) throw error;
                         mn.notification('Your Testimonial Is Liked', 'Testimonial Like', req.body.user_id, req.body.studio_id);
                         // sendNotificationToMe('Your Testimonial Is Liked', 'Testimonial Like', req.body.user_id);
                         con2.connectionWriter.query('insert into user_testimonial_likes SET ?', req.body, function (error, userUnlikeResults, fields) {
-                            console.log("5555555555555");
-                            console.log(error)
                             if (error) throw error;
                             return res.status(200).json({ 'status': true, 'message': 'The testimonial is liked by you.' });
                         });
@@ -546,8 +523,6 @@ otherModel.prototype.updateTestimonialLike = function (req, res) {
 };
 
 otherModel.prototype.getLimitRecords = function (req, res) {
-    console.log("came")
-    console.log(' select count(*) as totalusers from users where location = ' + req.params.locationid + ' and studioid = ' + req.params.studioid + '; select * from users where location = ' + req.params.locationid + ' and studioid = ' + req.params.studioid + '  limit ' + req.params.skip + ',' + req.params.limit)
     this.dbMySQL.connectionReader.query(' select count(*) as totalusers from users where location = ' + req.params.locationid + ' and studioid = ' + req.params.studioid + ' ; select * from users where location = ' + req.params.locationid + ' and studioid = ' + req.params.studioid + '  limit ' + req.params.skip + ',' + req.params.limit, function (err, results) {
         if (err || !results || Object.keys(results).length == 0) {
             res.send({ status: false, data: [], err: err, message: "No Records Found" });
@@ -573,12 +548,7 @@ otherModel.prototype.BroadcastSmsToAll = function (req, res) {
                             url: url,
                             method: 'GET',
                         }, function (error, response, body) {
-                            console.log("************* ERRORrrrrrrrrrrrrr")
-                            console.log(error);
-                            console.log("************* RESPONCEEEEEEEE")
-                            console.log(response);
-                            console.log("******************* BODYYYYYYYYY")
-                            console.log(body)
+
                         });
                     }
                 });
@@ -612,12 +582,7 @@ otherModel.prototype.broadcastMembershipSendSms = function (req, res) {
                         url: url,
                         method: 'GET',
                     }, function (error, response, body) {
-                        console.log("************* ERRORrrrrrrrrrrrrr")
-                        console.log(error);
-                        console.log("************* RESPONCEEEEEEEE")
-                        console.log(response);
-                        console.log("******************* BODYYYYYYYYY")
-                        console.log(body)
+
                     });
                 }
             })
@@ -644,16 +609,13 @@ otherModel.prototype.mobileTokenGenerate = function (req, res) {
 
 
 otherModel.prototype.webLogin = function (req, res) {
-    console.log("came inside (((((((((((((((********");
     this.dbMySQL.connectionReader.query('select * from employee where emp_status=1 and emp_email = "' + req.body.emailid + '" and emp_password = "' + req.body.password + '" and emp_status=1', function (err, results) {
         if (err || Object.keys(results).length == 0) {
             res.status(200).json({ status: false, data: [], err: err, message: "You Are Not Register" });
         } else {
-            var token, _empData ;
+            var token, _empData;
             _empData = results[0];
             _empData.sb_u_role = 1;
-            console.log("empdata");
-            console.log(_empData);
             token = jwt.sign({ data: _empData }, app.get('superSecret'), {
                 expiresIn: 60 * 60 * 1000
             });

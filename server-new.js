@@ -5,10 +5,21 @@ var config = require("./config/config.json");
 var bodyParser = require('body-parser');
 var methodOverride = require('method-override');
 var cors = require('cors')
+var redis = require("redis");
+
 console.log(config.PORT)
 app.listen(config.PORT, function () {
     console.log("shapes")
     console.log(config.PORT + "port")
+});
+client = redis.createClient("6379", "127.0.0.1");
+
+client.on('connect', function () {
+    console.log("redis Connected")
+});
+
+client.on('error', function (err) {
+    console.log("redis error"+err);
 });
 
 app.use(function (req, res, next) {
@@ -23,10 +34,6 @@ app.use(cors())
 app.options('*', cors())
 
 app.use(function (req, res, next) {
-    console.log("************8");
-    console.log(req.headers['x-access-token'])
-    console.log(req.headers['username'])
-    console.log(req.headers['password'])
     if (req.method == 'OPTIONS') {
         res.send(200);
     } else {

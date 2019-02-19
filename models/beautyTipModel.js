@@ -32,8 +32,6 @@ beautyTipModel.prototype.getAll = function (params, callback) {
             sql = sql + " rec_status = 1";
         }
     }
-    console.log(params)
-    console.log('select * from beauty_tips ' + sql)
     this.dbMySQL.connectionReader.query('select * from beauty_tips ' + sql, function (err, results) {
         callback(err, results);
     });
@@ -74,10 +72,7 @@ beautyTipModel.prototype.create = function (data, callback) {
                 }
             });
         } else {
-            console.log("came here fir api");
-            console.log(data);
             con1.connectionWriter.query('UPDATE beauty_tips SET ? WHERE tip_id = ' + data.tip_id, data, function (error, results) {
-                console.log(error, results)
                 if (error) {
                     callback(error, data);
                 } else {

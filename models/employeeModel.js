@@ -18,7 +18,6 @@ employeeModel.prototype.getAll = function (params, callback) {
             sql = sql + " emp_status = 1";
         }
     }
-    console.log(params)
     this.dbMySQL.connectionReader.query(' select * from employee '+ sql, function (err, results) {
         callback(err, results);
     });

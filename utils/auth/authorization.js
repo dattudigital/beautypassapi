@@ -19,7 +19,6 @@ module.exports.isSuper = function (req, res, next) {
 }
 
 module.exports.isCandidate = function (req, res, next) {
-    console.log(req.decode)
     if (req.decode) {
         if (req.decode.sb_u_role == 2) {
             next();

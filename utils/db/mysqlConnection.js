@@ -1,18 +1,18 @@
 var mysql = require('mysql');
 
 const connectionWriter = mysql.createConnection({
-	host: 'trendzbeauty-cluster-1.cluster-cqvzsqc8lyno.ap-south-1.rds.amazonaws.com',
-	user: 'tredzdb',
+	host: '172.31.21.157',
+	user: 'root',
 	password: 'Digitalrupay',
-	database: 'shapes',
+	database: 'shapes_new',
 	port: 3306
 });
 
 const connectionReader = mysql.createConnection({
-	host: 'trendzbeauty-cluster-1.cluster-ro-cqvzsqc8lyno.ap-south-1.rds.amazonaws.com',
-	user: 'tredzdb',
+	host: '172.31.21.157',
+	user: 'root',
 	password: 'Digitalrupay',
-	database: 'shapes',
+	database: 'shapes_new',
 	port: 3306,
 	multipleStatements: true
 });

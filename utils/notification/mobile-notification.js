@@ -8,11 +8,7 @@ function sendMobileNotification() {
 }
 
 sendMobileNotification.prototype.notification = function (desc, title, mindbodyId, studioId) {
-    console.log(desc, title, mindbodyId, studioId)
-    console.log("get notification ")
-    console.log('select * from users where mindbody_id = "' + mindbodyId + '" and studioid ="' + studioId + '"')
     this.dbMySQL.connectionReader.query('select * from users where mindbody_id = "' + mindbodyId + '" and studioid ="' + studioId + '"', function (error, results, fields) {
-        console.log(results);
         if (error) {
             return;
         }
@@ -29,10 +25,10 @@ sendMobileNotification.prototype.notification = function (desc, title, mindbodyI
             };
             fcm.send(message)
                 .then(function (response) {
-                    console.log(response);
+                    // console.log(response);
                 })
                 .catch(function (err) {
-                    console.log(err);
+                    // console.log(err);
                 })
         }
     });

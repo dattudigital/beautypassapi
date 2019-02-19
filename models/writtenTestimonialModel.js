@@ -77,6 +77,7 @@ writtenTestimonialModel.prototype.create = function (data, callback) {
             } else {
                 data.testimonial_id = results.insertId;
                 setTimeout(function () {
+                    console.log("***********************************************************************")
                     console.log('select * from user_rewards where user_id = ' + data.user_id + ' and studio_id = ' + data.studio_id + ' and activity_code = ' + activity_code)
                     con1.connectionReader.query('select * from user_rewards where user_id = ' + data.user_id + ' and studio_id = ' + data.studio_id + ' and activity_code = ' + activity_code, function (__err, __result) {
                         console.log(__err)
@@ -89,14 +90,19 @@ writtenTestimonialModel.prototype.create = function (data, callback) {
                                 refer_desc: 'written testimonials'
                             }
                             con2.connectionReader.query('select * from reff_activities where activity_code = "230983"', function (e, r) {
+                               console.log("PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP")
+                                console.log(e, r)
                                 if (Object.keys(r).length == 1) {
                                     _data.points = r[0].activity_points;
                                     console.log("Points");
                                     console.log(_data);
                                     con3.connectionWriter.query('insert into user_rewards SET ?', _data, function (_err, result) {
+                                        console.log("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%")
+                                        console.log(_err, result)
                                         if (err) {
                                             callback(err, data);
                                         } else {
+                                            console.log('select sum(points) as pointsum,SUM(debit) as debit from user_rewards where user_id ="' + data.user_id + ' and studio_id = ' + data.studio_id)
                                             con4.connectionReader.query('select sum(points) as pointsum,SUM(debit) as debit from user_rewards where user_id ="' + data.user_id + ' and studio_id = ' + data.studio_id, function (error, reward_points) {
                                                 if (error) {
                                                     callback(err, data);
@@ -115,7 +121,7 @@ writtenTestimonialModel.prototype.create = function (data, callback) {
                             callback(err, data);
                         }
                     })
-                }, 100)
+                }, 500)
                 mn.notification('Written Testimonials', 'Written Testimonial', data.user_id, data.studio_id);
                 // sendNotificationToMe('Written Testimonials', 'Written Testimonial', data.user_id);
             }
