@@ -34,9 +34,21 @@ redisCache.prototype.get = function (url, callback) {
 
 redisCache.prototype.delete = function (url,callback) {
     console.log(url);
-    if(url == '/beauty-tips'){
-        client.del('/beauty-tips?type=2');
-        client.del('/beauty-tips?type=1');
+    if(url.match(/beauty-tips/g)){
+        client.del('/beauty-tips?type=2&status=1');
+    }    
+    if(url.match(/faqs/g)){
+        client.del('/faqs?status=1');
+    }
+    
+    if(url.match(/reffer-activities/g)){
+        client.del('/reffer-activities?status=1');
+    }
+    if(url.match(/reward-points/g)){
+        client.del('/reward-points?status=1');
+    }
+    if(url.match(/employees/g)){
+        client.del('/employees?status=1');
     }
     client.del(url);
 }

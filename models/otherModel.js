@@ -110,7 +110,8 @@ otherModel.prototype.checkValidUser = function (req, res) {
 
 otherModel.prototype.userSearch = function (req, res) {
     console.log("came inside (((((((((((((((********");
-    this.dbMySQL.connectionReader.query("select  *,concat(IF(first_name IS NULL,'',first_name),' ',IF(last_name IS NULL,'',last_name),' ',IF(mindbody_id IS NULL,'',mindbody_id),' - ', IF(studioid IS NULL,'',studioid), ' - ', IF(location IS NULL,'',location)) as alldetails from users where email_id like '%" + req.query.name + "%' or mindbody_id like '%" + req.query.name + "%' or mobile like '%" + req.query.name + "%'", function (_err, _result) {
+    
+    this.dbMySQL.connectionReader.query("select  *,concat(IF(first_name IS NULL,'',first_name),' ',IF(last_name IS NULL,'',last_name),' ',IF(mindbody_id IS NULL,'',mindbody_id),' - ', IF(studioName IS NULL,'',studioName), ' - ', IF(location IS NULL,'',location)) as alldetails from users where email_id like '%" + req.query.name + "%' or mindbody_id like '%" + req.query.name + "%' or mobile like '%" + req.query.name + "%'", function (_err, _result) {
         if (_err || Object.keys(_result).length == 0) {
             return res.status(200).json({ status: false, data: [], err: _err, message: "No User Found" })
         } else {
@@ -147,7 +148,7 @@ otherModel.prototype.checkCoupon = function (req, res) {
             }
             mn.notification(data.reward_for, 'Buy Coupon', data.user_id, data.studio_id);
             // sendNotificationToMe(data.reward_for, 'Buy Coupon', data.user_id);
-            rc.delete('/mindbody-coupons');
+            // rc.delete('/mindbody-coupons');
             con1.connectionWriter.query('insert into user_rewards SET ?', data);
             var data = {
                 user_id: req.body.mindbody_id,
@@ -341,7 +342,7 @@ otherModel.prototype.bulkUploadCoupon = function (req, res) {
     var errData = [];
     var count = 1;
     var con1 = this.dbMySQL;
-    rc.delete('/mindbody-coupons');
+    // rc.delete('/mindbody-coupons');
     async.forEach(req.body, function (item, callback) {
         con1.connectionWriter.query("INSERT INTO `mindbody_coupons` ( `coupons_number`, `coupons_for`,`createdempid`,`coupons_status`) VALUES ( " + JSON.stringify(item["coupon num"]) + ", " + JSON.stringify(item["coupon point"]) + "," + item.empid + ",1)", function (err, result) {
             if (err) {

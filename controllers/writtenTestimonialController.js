@@ -12,7 +12,7 @@ function writtenTestimonialController() {
 }
 
 writtenTestimonialController.prototype.getAll = function (req, res, next) {
-    rc.delete('/written-testimonials');
+    // rc.delete('/written-testimonials');
     controllerUtil.getAll(wtm, req, res, next);
 };
 

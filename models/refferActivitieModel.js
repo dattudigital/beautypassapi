@@ -17,9 +17,17 @@ refferActivitieModel.prototype.getAll = function (params, callback) {
             }
             sql = sql + " ra.activity_status = 1";
         }
+        if (params.query.enddate) {
+            if (count == 0) {
+                count++
+                sql = sql + " where ";
+            } else {
+                sql = sql + " and ";
+            }
+            sql = sql + "  date(ra.activity_end_date) >= CURDATE() ";
+        }
     }
-    console.log(params)
-    this.dbMySQL.connectionReader.query('SELECT ra.`*`,(SELECT CONCAT(e1.emp_firstname , " ", e1.emp_lastname ) FROM employee e  WHERE e.employee_id = ra.createdemp_id ) AS createdempname,(SELECT CONCAT(e2.emp_firstname , " ", e2.emp_lastname ) FROM employee e2  WHERE e2.employee_id = ra.updatedempid ) AS updatedempname FROM reff_activities ra left join employee e1 on ra.createdemp_id = e1.employee_id ', function (err, results) {
+    this.dbMySQL.connectionReader.query('SELECT ra.`*`,(SELECT CONCAT(e1.emp_firstname , " ", e1.emp_lastname ) FROM employee e  WHERE e.employee_id = ra.createdemp_id ) AS createdempname,(SELECT CONCAT(e2.emp_firstname , " ", e2.emp_lastname ) FROM employee e2  WHERE e2.employee_id = ra.updatedempid ) AS updatedempname FROM reff_activities ra left join employee e1 on ra.createdemp_id = e1.employee_id '+sql, function (err, results) {
         console.log(err, results);
         callback(err, results);
     });

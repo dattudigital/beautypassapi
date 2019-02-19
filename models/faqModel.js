@@ -21,6 +21,7 @@ faqModel.prototype.getAll = function (params, callback) {
         }
     }
     console.log(params)
+    console.log(' select * from faqs ' + sql)
     this.dbMySQL.connectionReader.query(' select * from faqs ' + sql, function (err, results) {
         callback(err, results);
     });

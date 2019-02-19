@@ -12,7 +12,7 @@ function beautyTipController() {
 }
 
 beautyTipController.prototype.getAll = function (req, res, next) {
-    rc.delete('/beauty-tips');
+    // rc.delete('/beauty-tips');
     controllerUtil.getAll(btc, req, res, next);
 };
 

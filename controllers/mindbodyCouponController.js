@@ -11,17 +11,17 @@ function mindbodyCouponController() {
 }
 
 mindbodyCouponController.prototype.getAll = function (req, res, next) {
-    rc.delete('/mindbody-coupons');
+    // rc.delete('/mindbody-coupons');
      controllerUtil.getAll(mcm, req, res, next);
 };
 
 mindbodyCouponController.prototype.create = function (req, res, next) {
-    rc.delete('/mindbody-coupons');
+    // rc.delete('/mindbody-coupons');
     controllerUtil.create(mcm, req, res, next);
 };
 
 mindbodyCouponController.prototype.remove = function (req, res, next) {
-    rc.delete('/mindbody-coupons');
+    // rc.delete('/mindbody-coupons');
     controllerUtil.remove(mcm, req, res, next);
 };
 

@@ -51,7 +51,7 @@ ControllerUtilFunction.prototype.create = function (commonModel, req, res, next,
             res.status(500).send({ status: false, data: [], err: err });
         } else {
             // data.id = result.insertId;
-            rc.delete(req.originalUrl);
+            // rc.delete(req.originalUrl);
             res.status(200).json({ status: true, data: data });
         }
     });
@@ -63,7 +63,7 @@ ControllerUtilFunction.prototype.update = function (commonModel, req, res, next,
         if (err) {
             res.status(500).json({ status: false, data: [], err: err });
         } else {
-            rc.delete(req.originalUrl);
+            // rc.delete(req.originalUrl);
             res.status(200).json({ status: true, data: data });
         }
     });
@@ -76,7 +76,7 @@ ControllerUtilFunction.prototype.remove = function (commonModel, req, res, next)
         } else if (result.affectedRows <= 0) {
             res.status(200).json({ status: false, data: [], err: 'Record Not Found To Delete' });
         } else {
-            rc.delete(req.originalUrl);
+            // rc.delete(req.originalUrl);
             res.status(200).json({ status: true, data: "Record Deleted Successfully" });
         }
     });
