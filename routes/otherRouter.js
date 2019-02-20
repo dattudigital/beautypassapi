@@ -65,6 +65,8 @@ router.post('/studioid-memberships-sms', middleAuth, role.isSuper, oc.broadcastM
 
 router.get('/users-limit/:studioid/:locationid/:skip/:limit', middleAuth, role.isSuper, oc.getLimitRecords.bind(oc));
 
+router.post('/transactions', middleAuth, role.isSuperOrCandidate, oc.transcationPoints.bind(oc));
+
 router.post('/token-get', oc.mobileTokenGenerate.bind(oc));
 
 module.exports = router;

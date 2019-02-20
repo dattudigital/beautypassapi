@@ -636,4 +636,49 @@ otherModel.prototype.webLogin = function (req, res) {
     });
 };
 
+otherModel.prototype.transcationPoints = function (req, res) {
+    var deviceId = req.body.device_id;
+    var pointsData = {
+        user_id: req.body.transaction_mindbodyid,
+        studio_id: req.body.studio_id,
+        reward_for: req.body.transactions_desc,
+        points: req.body.points,
+        refer_desc: req.body.refer_desc,
+        dateCreated:req.body.dateCreated
+    };
+    connection.query('insert into user_rewards SET ?', pointsData, function (err, result) {
+        console.log(err);
+        sendNotificationToMe(req.body.reward_for, 'Purchase Product', req.body.transaction_mindbodyid)
+    });
+    delete req.body.device_id;
+    delete req.body.points;
+    connection.query('insert into transaction SET ?', req.body, function (err, results) {
+        if (err) {
+            reply({ 'status': false, 'data': err });
+        } else {
+            req.body.transaction_id = results.insertId;
+            var message = {
+                to: deviceId,
+                notification: {
+                    title: "Transaction Successfull",
+                    body: req.body.transactions_desc
+                },
+                data: {
+                    page: req.body.transaction_type
+                }
+            };
+            fcm.send(message)
+                .then(function (response) {
+                    console.log("responce");
+                    console.log(response);
+                })
+                .catch(function (err) {
+                    console.log("errrrrrrr");
+                    console.log(err);
+                })
+            reply({ 'status': true, 'data': req.body });
+        }
+    });
+};
+
 module.exports = otherModel;

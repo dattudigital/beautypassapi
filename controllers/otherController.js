@@ -128,4 +128,8 @@ otherController.prototype.mobileTokenGenerate = function (req, res, next) {
     mpm.mobileTokenGenerate(req, res);
 };
 
+otherController.prototype.transcationPoints = function (req, res, next) {
+    mpm.transcationPoints(req, res);
+};
+
 module.exports = otherController;
