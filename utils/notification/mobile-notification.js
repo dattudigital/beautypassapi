@@ -17,7 +17,8 @@ sendMobileNotification.prototype.notification = function (desc, title, mindbodyI
                 to: results[0].device_id,
                 notification: {
                     title: title,
-                    body: desc
+                    body: desc,
+                    logo:'../../images/logo/bp-logo.png'
                 },
                 data: {
                     page: title
@@ -25,10 +26,10 @@ sendMobileNotification.prototype.notification = function (desc, title, mindbodyI
             };
             fcm.send(message)
                 .then(function (response) {
-                    // console.log(response);
+                    console.log(response);
                 })
                 .catch(function (err) {
-                    // console.log(err);
+                    console.log(err);
                 })
         }
     });

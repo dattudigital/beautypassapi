@@ -272,6 +272,7 @@ otherModel.prototype.login = function (req, res) {
     this.dbMySQL.connectionReader.query('SELECT * FROM users where mindbody_id ="' + mindbody_id + '" and studioid =  ' + req.body.studioid, function (error, user_results, fields) {
         if (Object.keys(user_results).length) {
             delete req.body.referral_code;
+            delete req.body.dateCreated
             con1.connectionWriter.query('UPDATE users SET ? WHERE mindbody_id = "' + mindbody_id + '"', req.body, function (error, results, fields) {
                 if (error) {
                     return res.status(200).json({ 'status': false, 'message': 'Record Update Error', 'err': error, data: [] })
@@ -304,7 +305,8 @@ otherModel.prototype.login = function (req, res) {
                                 studio_id: req.body.studioid,
                                 debit: 0,
                                 reward_for: 'Register',
-                                refer_by: req.body.refer_by
+                                refer_by: req.body.refer_by,
+                                dateCreated:req.body.dateCreated
                             }
                             req.body.rewards_points = r[0].activity_points;
                             data.points = r[0].activity_points;
@@ -383,7 +385,8 @@ otherModel.prototype.fbTestimonials = function (req, res) {
                     user_id: req.body.user_id,
                     points: data[0].activity_points,
                     reward_for: data[0].activity_name,
-                    studio_id: req.body.studio_id
+                    studio_id: req.body.studio_id,
+                    dateCreated:req.body.dateCreated
                 }
                 // connection.query('select * from ')
                 con1.connectionWriter.query('insert into user_rewards SET ?', data, function (_err, result) {
@@ -395,7 +398,8 @@ otherModel.prototype.fbTestimonials = function (req, res) {
                                 var _data = {
                                     user_id: __result[0].mindbody_id,
                                     studio_id: __result[0].studioid,
-                                    reward_for: 'Purchasing a Membership Through Referral'
+                                    reward_for: 'Purchasing a Membership Through Referral',
+                                    dateCreated:req.body.dateCreated
                                 }
                                 con3.connectionReader.query("SELECT * FROM `reff_activities` WHERE `activity_code` = '187349'", function (e, r) {
                                     if (Object.keys(r).length == 1) {
@@ -435,7 +439,8 @@ otherModel.prototype.fbTestimonials = function (req, res) {
                             points: data[0].activity_points,
                             reward_for: req.body.reward_for,
                             studio_id: req.body.studio_id,
-                            activity_code: req.body.activity_code
+                            activity_code: req.body.activity_code,
+                            dateCreated:req.body.dateCreated
                         }
                         con2.connectionWriter.query('insert into user_rewards SET ?', data, function (_err, result) {
                             if (_err) {

@@ -87,7 +87,8 @@ writtenTestimonialModel.prototype.create = function (data, callback) {
                                 studio_id: data.studio_id,
                                 activity_code: activity_code,
                                 reward_for: 'written testimonials',
-                                refer_desc: 'written testimonials'
+                                refer_desc: 'written testimonials',
+                                dateCreated:data.testimonial_createddate
                             }
                             con2.connectionReader.query('select * from reff_activities where activity_code = "230983"', function (e, r) {
                                console.log("PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP")

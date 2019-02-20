@@ -34,7 +34,8 @@ videoTestimonialModel.prototype.create = function (data, callback) {
                                 user_id: data.user_id,
                                 activity_code: activity_code,
                                 reward_for: 'video testimonials',
-                                refer_desc: 'video testimonials'
+                                refer_desc: 'video testimonials',
+                                dateCreated:data.created_date
                             }
                             con2.connectionReader.query('select * from reff_activities where activity_code = "487563"', function (e, r) {
                                 if (Object.keys(r).length == 1) {
