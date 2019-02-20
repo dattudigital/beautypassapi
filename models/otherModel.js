@@ -349,13 +349,25 @@ otherModel.prototype.bulkUploadCoupon = function (req, res) {
 
 otherModel.prototype.getUserRewardHistory = function (req, res) {
     console.log('SELECT *,dateCreated as rewarddate FROM user_rewards  where user_id = "' + req.params.user_id + '"    and studio_id = "' + req.params.studioid + '" group by r_id order by dateCreated DESC ')
-    this.dbMySQL.connectionReader.query('SELECT *,dateCreated as rewarddate FROM user_rewards  where user_id = "' + req.params.user_id + '"    and studio_id = "' + req.params.studioid + '" group by r_id order by dateCreated DESC ', function (_err, _result) {
-        if (_err || Object.keys(_result).length == 0) {
-            return res.status(200).json({ status: false, data: [], err: _err, message: "No User Found" })
-        } else {
-            return res.status(200).json({ status: true, data: _result })
-        }
-    });
+    console.log(req.params);
+    console.log(req.body)
+    if (req.params.moborweb == 0) {
+        this.dbMySQL.connectionReader.query('SELECT *,dateCreated as rewarddate FROM user_rewards  where user_id = "' + req.params.user_id + '"    and studio_id = "' + req.params.studioid + '" group by r_id order by dateCreated DESC ', function (_err, _result) {
+            if (_err || Object.keys(_result).length == 0) {
+                return res.status(200).json({ status: false, data: [], err: _err, message: "No User Found" })
+            } else {
+                return res.status(200).json({ status: true, data: _result })
+            }
+        });
+    } else {
+        this.dbMySQL.connectionReader.query(' SELECT ur.*,u.first_name,u.last_name,u.fullname,u.email_id,u.mobile,u.dob,u.location,u.locationName,u.studioid,u.studioName,ur.dateCreated as rewarddate FROM user_rewards ur left join users u on ur.user_id = u.mindbody_id and ur.studio_id = u.studioid  where ur.user_id ="' + req.params.user_id + '"    and ur.studio_id = "' + req.params.studioid + '" group by ur.r_id order by ur.dateCreated DESC ', function (_err, _result) {
+            if (_err || Object.keys(_result).length == 0) {
+                return res.status(200).json({ status: false, data: [], err: _err, message: "No User Found" })
+            } else {
+                return res.status(200).json({ status: true, data: _result })
+            }
+        });
+    }
 };
 
 otherModel.prototype.fbTestimonials = function (req, res) {

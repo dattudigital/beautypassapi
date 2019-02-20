@@ -45,7 +45,7 @@ router.post('/login', middleAuth, role.isCandidate, oc.login.bind(oc));
 
 router.post('/bulk-upload', middleAuth, role.isSuper, oc.bulkUploadCoupon.bind(oc));
 
-router.get('/reward_histories/:user_id/:studioid', middleAuth, role.isSuperOrCandidate, oc.getUserRewardHistory.bind(oc));
+router.get('/reward_histories/:user_id/:studioid/:moborweb', middleAuth, role.isSuperOrCandidate, oc.getUserRewardHistory.bind(oc));
 
 router.post('/fb-testimonials', middleAuth, role.isCandidate, oc.fbTestimonials.bind(oc));
 
