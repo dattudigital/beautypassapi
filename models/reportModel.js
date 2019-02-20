@@ -26,6 +26,15 @@ faqModel.prototype.getPerksReport = function (req, res) {
             }
             sql = sql + " ca.coupon_createddate <= '" + req.query.enddate + " 23:59:59'";
         }
+        if (req.query.studioid) {
+            if (count == 0) {
+                count++
+                sql = sql + " where ";
+            } else {
+                sql = sql + " and ";
+            }
+            sql = sql + " ca.studio_id = '" + req.query.studioid + "'"
+        }
     }
     this.dbMySQL.connectionReader.query('select ca.*,mc.coupons_number,mc.coupons_for,mc.coupons_id,u.fullname,u.email_id,u.mobile from shapes.couponsassigned as ca LEFT JOIN shapes.mindbody_coupons as mc ON mc.coupons_id=ca.coupons_id LEFT JOIN shapes.users as u ON u.mindbody_id=ca.user_id ' + sql, function (err, results) {
         if (err || Object.keys(results).lenght == 0) {
