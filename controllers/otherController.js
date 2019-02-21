@@ -132,4 +132,8 @@ otherController.prototype.transcationPoints = function (req, res, next) {
     mpm.transcationPoints(req, res);
 };
 
+otherController.prototype.sendMobileNotification = function (req, res, next) {
+    mpm.sendMobileNotification(req, res);
+};
+
 module.exports = otherController;

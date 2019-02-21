@@ -33,7 +33,7 @@ router.get('/page-video-testimonials', middleAuth, role.isCandidate, oc.pageLimi
 
 router.get('/page-written-testimonials', middleAuth, role.isCandidate, oc.pageLimitWrittenTestimonials.bind(oc));
 
-router.get('/graphs', middleAuth, role.isSuper, oc.graphs.bind(oc));
+// router.get('/graphs', middleAuth, role.isSuper, oc.graphs.bind(oc));
 
 router.get('/get_users_list', middleAuth, role.isSuper, oc.users.bind(oc));
 
@@ -68,5 +68,7 @@ router.get('/users-limit/:studioid/:locationid/:skip/:limit', middleAuth, role.i
 router.post('/transactions', middleAuth, role.isSuperOrCandidate, oc.transcationPoints.bind(oc));
 
 router.post('/token-get', oc.mobileTokenGenerate.bind(oc));
+
+router.post('/notifications', middleAuth, role.isSuper, oc.sendMobileNotification.bind(oc));
 
 module.exports = router;

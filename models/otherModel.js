@@ -190,7 +190,7 @@ otherModel.prototype.getRewardPoint = function (req, res) {
 };
 
 otherModel.prototype.graphs = function (req, res) {
-    this.dbMySQL.connectionReader.query("(select DAYNAME(coupon_createddate) as dayname,DAY(coupon_createddate) as day,count(couponassigned_id) as count from couponsassigned where coupon_createddate >= now()-interval 1 month GROUP BY DATE(coupon_createddate)) order by coupon_createddate desc", function (_err, _result) {
+    this.dbMySQL.connectionReader.query("select sum(points)as total,day(dateCreated) as day from user_rewards where  dateCreated < DATE_ADD(NOW(), INTERVAL +1 MONTH)  group  by date(dateCreated)", function (_err, _result) {
         if (_err || Object.keys(_result).length == 0) {
             return res.status(200).json({ status: false, data: [], err: _err, message: "No Data Found" })
         } else {
@@ -306,7 +306,7 @@ otherModel.prototype.login = function (req, res) {
                                 debit: 0,
                                 reward_for: 'Register',
                                 refer_by: req.body.refer_by,
-                                dateCreated:req.body.dateCreated
+                                dateCreated: req.body.dateCreated
                             }
                             req.body.rewards_points = r[0].activity_points;
                             data.points = r[0].activity_points;
@@ -386,7 +386,7 @@ otherModel.prototype.fbTestimonials = function (req, res) {
                     points: data[0].activity_points,
                     reward_for: data[0].activity_name,
                     studio_id: req.body.studio_id,
-                    dateCreated:req.body.dateCreated
+                    dateCreated: req.body.dateCreated
                 }
                 // connection.query('select * from ')
                 con1.connectionWriter.query('insert into user_rewards SET ?', data, function (_err, result) {
@@ -399,7 +399,7 @@ otherModel.prototype.fbTestimonials = function (req, res) {
                                     user_id: __result[0].mindbody_id,
                                     studio_id: __result[0].studioid,
                                     reward_for: 'Purchasing a Membership Through Referral',
-                                    dateCreated:req.body.dateCreated
+                                    dateCreated: req.body.dateCreated
                                 }
                                 con3.connectionReader.query("SELECT * FROM `reff_activities` WHERE `activity_code` = '187349'", function (e, r) {
                                     if (Object.keys(r).length == 1) {
@@ -440,7 +440,7 @@ otherModel.prototype.fbTestimonials = function (req, res) {
                             reward_for: req.body.reward_for,
                             studio_id: req.body.studio_id,
                             activity_code: req.body.activity_code,
-                            dateCreated:req.body.dateCreated
+                            dateCreated: req.body.dateCreated
                         }
                         con2.connectionWriter.query('insert into user_rewards SET ?', data, function (_err, result) {
                             if (_err) {
@@ -649,15 +649,16 @@ otherModel.prototype.transcationPoints = function (req, res) {
         reward_for: req.body.transactions_desc,
         points: req.body.points,
         refer_desc: req.body.refer_desc,
-        dateCreated:req.body.dateCreated
+        dateCreated: req.body.dateCreated
     };
-    connection.query('insert into user_rewards SET ?', pointsData, function (err, result) {
+    var con1 = this.dbMySQL;
+    this.dbMySQL.connectionWriter.query('insert into user_rewards SET ?', pointsData, function (err, result) {
         console.log(err);
         sendNotificationToMe(req.body.reward_for, 'Purchase Product', req.body.transaction_mindbodyid)
     });
     delete req.body.device_id;
     delete req.body.points;
-    connection.query('insert into transaction SET ?', req.body, function (err, results) {
+    con1.connectionWriter.query('insert into transaction SET ?', req.body, function (err, results) {
         if (err) {
             reply({ 'status': false, 'data': err });
         } else {
@@ -681,9 +682,47 @@ otherModel.prototype.transcationPoints = function (req, res) {
                     console.log("errrrrrrr");
                     console.log(err);
                 })
-            reply({ 'status': true, 'data': req.body });
+            res.status(200).json({ 'status': true, 'data': req.body });
         }
     });
+};
+
+
+otherModel.prototype.sendMobileNotification = function (req, res) {
+    if (req.body.studio_id && req.body.desc && req.body.title) {
+        var sql = '';
+        if (req.body.locationid) {
+            sql = " and location=" + req.body.locationid
+        }
+        this.dbMySQL.connectionReader.query('select * from users where studioid =' + req.body.studio_id + sql, function (error, results, fields) {
+            if (error) {
+                res.status(200).json({ 'status': false, 'data': [], err: error, message: "Please Provide Studio id" });
+            }
+            if (Object.keys(results).length) {
+                results.forEach(element => {
+                    var message = {
+                        to: element.device_id,
+                        notification: {
+                            title: req.body.title,
+                            body: req.body.desc
+                        },
+                        data: {
+                            page: req.body.title
+                        }
+                    };
+                    fcm.send(message)
+                        .then(function (response) {
+                            console.log(response);
+                        })
+                        .catch(function (err) {
+                            console.log(err);
+                        })
+                });
+            }
+        });
+    } else {
+        res.status(200).json({ 'status': false, 'data': [], message: "Please Provide Studio id and title and description" });
+    }
 };
 
 module.exports = otherModel;
