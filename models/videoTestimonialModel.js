@@ -8,7 +8,7 @@ function videoTestimonialModel() {
 }
 
 videoTestimonialModel.prototype.getAll = function (params, callback) {
-    this.dbMySQL.connectionReader.query('select t.testimonial_id,t.description,t.video,t.user_id,t.likes,t.video_thumbnail,t.fullname,t.rec_status,u.locationName,u.studioName,e.employee_id,(SELECT CONCAT(e.emp_firstname , " ", e.emp_lastname ) FROM employee e  WHERE e.employee_id = t.updatedempid) AS empname   from testimonials t left join users u on t.user_id = u.studioid and t.studio_id = u.studioid left join employee e on t.updatedempid = e.employee_id  order by t.likes DESC', function (err, results) {
+    this.dbMySQL.connectionReader.query('select t.testimonial_id,t.description,t.video,t.user_id,t.likes,t.video_thumbnail,t.fullname,t.rec_status,u.locationName,u.studioName,e.employee_id,(SELECT CONCAT(e.emp_firstname , " ", e.emp_lastname ) FROM employee e  WHERE e.employee_id = t.updatedempid) AS empname   from testimonials t left join users u on t.user_id = u.mindbody_id and t.studio_id = u.studioid left join employee e on t.updatedempid = e.employee_id  order by t.likes DESC', function (err, results) {
         callback(err, results);
     });
 };

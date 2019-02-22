@@ -18,7 +18,8 @@ refferActivitieModel.prototype.getAll = function (params, callback) {
             sql = sql + "  rp.rewardpoint_status = 1";
         }
     }
-    this.dbMySQL.connectionReader.query('SELECT rp.`*`,(SELECT CONCAT(e1.emp_firstname , " ", e1.emp_lastname ) FROM employee e  WHERE e.employee_id = rp.createdempid ) AS createdempname,(SELECT CONCAT(e2.emp_firstname , " ", e2.emp_lastname ) FROM employee e2  WHERE e2.employee_id = rp.updatedempid ) AS updatedempname FROM rewardpoint rp left join employee e1 on rp.createdempid = e1.employee_id ', function (err, results) {
+    console.log('SELECT rp.`*`,(SELECT CONCAT(e1.emp_firstname , " ", e1.emp_lastname ) FROM employee e  WHERE e.employee_id = rp.createdempid ) AS createdempname,(SELECT CONCAT(e2.emp_firstname , " ", e2.emp_lastname ) FROM employee e2  WHERE e2.employee_id = rp.updatedempid ) AS updatedempname FROM rewardpoint rp left join employee e1 on rp.createdempid = e1.employee_id '+ sql)
+    this.dbMySQL.connectionReader.query('SELECT rp.`*`,(SELECT CONCAT(e1.emp_firstname , " ", e1.emp_lastname ) FROM employee e  WHERE e.employee_id = rp.createdempid ) AS createdempname,(SELECT CONCAT(e2.emp_firstname , " ", e2.emp_lastname ) FROM employee e2  WHERE e2.employee_id = rp.updatedempid ) AS updatedempname FROM rewardpoint rp left join employee e1 on rp.createdempid = e1.employee_id '+ sql, function (err, results) {
         callback(err, results);
     });
 };

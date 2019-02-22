@@ -4,6 +4,9 @@ const REQUEST = require('request');
 var async = require("async");
 var jwt = require('jsonwebtoken');
 app.set('superSecret', 'shapesBrow');
+var FCM = require('fcm-push');
+var serverKey = 'AAAAwWvnNvs:APA91bEHeN5TUc0m2kmFfjlbJJR-CUgDyFl2o-XeyZaYWM5fA-sEPt8FefW-02nKOGzl6BOzvkzOXIzMjAEGFJqvh2YPXsjQKavr_tpsqb01ZVqwWji-D7IPz289GAHj5x8allXYttMP';
+var fcm = new FCM(serverKey);
 var redis = require("../utils/cache/redisCache"),
     rc,
     mn;
@@ -694,6 +697,7 @@ otherModel.prototype.sendMobileNotification = function (req, res) {
         if (req.body.locationid) {
             sql = " and location=" + req.body.locationid
         }
+        console.log('select * from users where studioid =' + req.body.studio_id + sql)
         this.dbMySQL.connectionReader.query('select * from users where studioid =' + req.body.studio_id + sql, function (error, results, fields) {
             if (error) {
                 res.status(200).json({ 'status': false, 'data': [], err: error, message: "Please Provide Studio id" });
@@ -719,6 +723,7 @@ otherModel.prototype.sendMobileNotification = function (req, res) {
                         })
                 });
             }
+            res.status(200).json({ 'status': true, 'data': []});
         });
     } else {
         res.status(200).json({ 'status': false, 'data': [], message: "Please Provide Studio id and title and description" });
