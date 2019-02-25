@@ -8,7 +8,15 @@ function writtenTestimonialModel() {
 }
 
 writtenTestimonialModel.prototype.getAll = function (params, callback) {
-    this.dbMySQL.connectionReader.query('select wt.`*`,u.locationName,u.studioName,e.employee_id,(SELECT CONCAT(e.emp_firstname , " ", e.emp_lastname ) FROM employee e  WHERE e.employee_id = wt.updatedempid) AS empname from written_testimonials wt left join  users u on wt.user_id = u.mindbody_id and wt.studio_id = u.studioid left join employee e on wt.updatedempid = e.employee_id  GROUP BY wt.testimonial_id  order by wt.testimonial_createddate DESC', function (err, results) {
+    var sql = '';
+    if (params) {
+        if (params.query) {
+            if (params.query.rating) {
+                sql = ' where wt.rating_5 < 3 ';
+            }
+        }
+    }
+    this.dbMySQL.connectionReader.query('select wt.`*`,u.locationName,u.studioName,e.employee_id,(SELECT CONCAT(e.emp_firstname , " ", e.emp_lastname ) FROM employee e  WHERE e.employee_id = wt.updatedempid) AS empname from written_testimonials wt left join  users u on wt.user_id = u.mindbody_id and wt.studio_id = u.studioid left join employee e on wt.updatedempid = e.employee_id  ' + sql + '  GROUP BY wt.testimonial_id  order by wt.testimonial_createddate DESC', function (err, results) {
         callback(err, results);
     });
 };

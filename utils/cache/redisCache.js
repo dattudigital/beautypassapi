@@ -54,6 +54,9 @@ redisCache.prototype.delete = function (url, callback) {
         client.del('/mindbody-coupons?status=1');
         client.del('/mindbody-coupons');
     }
+    if (url.match(/written-testimonials/g)) {
+        client.del('/written-testimonials?rating=3');
+    }
     client.del(url);
 }
 
