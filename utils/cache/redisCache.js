@@ -31,6 +31,7 @@ redisCache.prototype.delete = function (url, callback) {
         client.del('/beauty-tips?status=1');
         client.del('/beauty-tips?type=2');
         client.del('/beauty-tips?type=1');
+        client.del('/beauty-tips?type=1&status=1');        
     }
     if (url.match(/faqs/g)) {
         console.log("came to statussssssss")
