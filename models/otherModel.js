@@ -19,12 +19,12 @@ function otherModel() {
 
 
 otherModel.prototype.webDashbaord = function (req, res) {
-    this.dbMySQL.connectionReader.query('SELECT COUNT(user_id) as femaletotal FROM users WHERE gender!="M" OR gender!="Male";SELECT COUNT(user_id) as maletotal FROM users WHERE gender="M" OR gender="Male";SELECT count(*) as totaluser FROM users;select count(*) as totalbeautytip from beauty_tips where rec_status  =  1;select count(*) as totalcoupon from mindbody_coupons where coupons_status  =  1;select count(*) as writtentotal from written_testimonials where  status = 1 ;select count(*) as videototal from testimonials where  rec_status = 1 ;SELECT count(*) as refferaltotal FROM reff_activities  where activity_status = 1;select count(*) as perktotal from rewardpoint where rewardpoint_status = 1;SELECT user_id,fullname,email_id,mobile,gender,mindbody_id FROM users ORDER BY user_id DESC LIMIT 10', function (err, results) {
+    this.dbMySQL.connectionReader.query('select count(*) as writtentotalless3 from written_testimonials where rating_5 < 3;SELECT COUNT(user_id) as maletotal FROM users WHERE gender="M" OR gender="Male";SELECT count(*) as totaluser FROM users;select count(*) as totalbeautytip from beauty_tips;select count(*) as totalcoupon from mindbody_coupons;select count(*) as writtentotal from written_testimonials ;select count(*) as videototal from testimonials ;SELECT count(*) as refferaltotal FROM reff_activities ;select count(*) as perktotal from rewardpoint;SELECT user_id,fullname,email_id,mobile,gender,mindbody_id,studioName,dateCreated FROM users ORDER BY user_id DESC LIMIT 10', function (err, results) {
         if (err || Object.keys(results).length == 0) {
             res.status(200).json({ status: false, data: [], err: err, message: "You Are Not Register" });
         } else {
             var data = {
-                femaletotal: results[0][0].femaletotal,
+                writtentotalless3: results[0][0].writtentotalless3,
                 maletotal: results[1][0].maletotal,
                 totaluser: results[2][0].totaluser,
                 totalbeautytip: results[3][0].totalbeautytip,
