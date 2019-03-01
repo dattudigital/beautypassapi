@@ -17,7 +17,6 @@ function otherModel() {
     this.dbMySQL = connection;
 }
 
-
 otherModel.prototype.webDashbaord = function (req, res) {
     this.dbMySQL.connectionReader.query('select count(*) as writtentotalless3 from written_testimonials where rating_5 < 3;SELECT COUNT(user_id) as maletotal FROM users WHERE gender="M" OR gender="Male";SELECT count(*) as totaluser FROM users;select count(*) as totalbeautytip from beauty_tips;select count(*) as totalcoupon from mindbody_coupons;select count(*) as writtentotal from written_testimonials ;select count(*) as videototal from testimonials ;SELECT count(*) as refferaltotal FROM reff_activities ;select count(*) as perktotal from rewardpoint;SELECT user_id,fullname,email_id,mobile,gender,mindbody_id,studioName,dateCreated FROM users ORDER BY user_id DESC LIMIT 10', function (err, results) {
         if (err || Object.keys(results).length == 0) {
@@ -193,7 +192,7 @@ otherModel.prototype.getRewardPoint = function (req, res) {
 };
 
 otherModel.prototype.graphs = function (req, res) {
-    this.dbMySQL.connectionReader.query("select sum(points)as total,day(dateCreated) as day from user_rewards where  dateCreated < DATE_ADD(NOW(), INTERVAL +1 MONTH)  group  by date(dateCreated)", function (_err, _result) {
+    this.dbMySQL.connectionReader.query("select sum(points)as total,day(dateCreated) as day,sum(debit) as debit  from user_rewards where  dateCreated < DATE_ADD(NOW(), INTERVAL +1 MONTH)  group  by date(dateCreated)", function (_err, _result) {
         if (_err || Object.keys(_result).length == 0) {
             return res.status(200).json({ status: false, data: [], err: _err, message: "No Data Found" })
         } else {
@@ -723,7 +722,7 @@ otherModel.prototype.sendMobileNotification = function (req, res) {
                         })
                 });
             }
-            res.status(200).json({ 'status': true, 'data': []});
+            res.status(200).json({ 'status': true, 'data': [] });
         });
     } else {
         res.status(200).json({ 'status': false, 'data': [], message: "Please Provide Studio id and title and description" });
