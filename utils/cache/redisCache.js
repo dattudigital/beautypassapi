@@ -42,6 +42,7 @@ redisCache.prototype.delete = function (url, callback) {
     if (url.match(/reffer-activities/g)) {
         client.del('/reffer-activities?status=1');
         client.del('/reffer-activities');
+        client.del('/reffer-activities?status=1&enddate=1');
     }
     if (url.match(/reward-points/g)) {
         client.del('/reward-points?status=1');

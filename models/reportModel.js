@@ -57,7 +57,7 @@ faqModel.prototype.getVocherReport = function (req, res) {
             } else {
                 sql = sql + " and ";
             }
-            sql = sql + " coupons_createddate >= '" + req.query.startdate + "'";
+            sql = sql + " coupons_modifydate >= '" + req.query.startdate + "'";
         }
         if (req.query.enddate) {
             if (count == 0) {
@@ -66,9 +66,10 @@ faqModel.prototype.getVocherReport = function (req, res) {
             } else {
                 sql = sql + " and ";
             }
-            sql = sql + " coupons_createddate <= '" + req.query.enddate + " 23:59:59'";
+            sql = sql + " coupons_modifydate <= '" + req.query.enddate + " 23:59:59'";
         }
     }
+    console.log("SELECT coupons_for,COUNT(IF(coupons_status='1',1, NULL)) 'Unused',COUNT(IF(coupons_status='0',1, NULL)) 'Used',COUNT(IF(coupons_enddate <= CURDATE(),1, NULL)) 'Expired' FROM mindbody_coupons " + sql + " group by coupons_for")
     this.dbMySQL.connectionReader.query("SELECT coupons_for,COUNT(IF(coupons_status='1',1, NULL)) 'Unused',COUNT(IF(coupons_status='0',1, NULL)) 'Used',COUNT(IF(coupons_enddate <= CURDATE(),1, NULL)) 'Expired' FROM mindbody_coupons " + sql + " group by coupons_for", function (err, results) {
         if (err || Object.keys(results).lenght == 0) {
             res.status(500).json({ status: false, data: [], "message": "No Data found", err: err });
