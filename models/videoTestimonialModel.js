@@ -35,7 +35,7 @@ videoTestimonialModel.prototype.create = function (data, callback) {
                                 activity_code: activity_code,
                                 reward_for: 'video testimonials',
                                 refer_desc: 'video testimonials',
-                                dateCreated:data.created_date
+                                dateCreated: data.created_date
                             }
                             con2.connectionReader.query('select * from reff_activities where activity_code = "487563"', function (e, r) {
                                 if (Object.keys(r).length == 1) {
@@ -44,14 +44,16 @@ videoTestimonialModel.prototype.create = function (data, callback) {
                                         if (err) {
                                             callback(err, data);
                                         } else {
-                                            con4.connectionReader.query('select sum(points) as pointsum,SUM(debit) as debit from user_rewards where user_id ="' + data.user_id + ' and studio_id = ' + data.studio_id, function (error, reward_points) {
-                                                if (error) {
-                                                    callback(err, data);
-                                                } else {
-                                                    data.rewards_points = reward_points[0].pointsum - reward_points[0].debit;;
-                                                    callback(err, data);
-                                                }
-                                            })
+                                            setTimeout(function () {
+                                                con4.connectionReader.query('select sum(points) as pointsum,SUM(debit) as debit from user_rewards where user_id ="' + data.user_id + ' and studio_id = ' + data.studio_id, function (error, reward_points) {
+                                                    if (error) {
+                                                        callback(err, data);
+                                                    } else {
+                                                        data.rewards_points = reward_points[0].pointsum - reward_points[0].debit;;
+                                                        callback(err, data);
+                                                    }
+                                                })
+                                            }, 500)
                                         }
                                     });
                                 } else {

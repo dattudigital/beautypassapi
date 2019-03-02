@@ -87,8 +87,8 @@ writtenTestimonialModel.prototype.create = function (data, callback) {
                 data.testimonial_id = results.insertId;
                 setTimeout(function () {
                     console.log("***********************************************************************")
-                    console.log('select * from user_rewards where user_id = ' + data.user_id + ' and studio_id = ' + data.studio_id + ' and activity_code = ' + activity_code)
-                    con1.connectionReader.query('select * from user_rewards where user_id = ' + data.user_id + ' and studio_id = ' + data.studio_id + ' and activity_code = ' + activity_code, function (__err, __result) {
+                    console.log('select * from user_rewards where user_id = ' + data.user_id + ' and studio_id = ' + data.studio_id + ' and activity_code = ' + activity_code+ " limit 1")
+                    con1.connectionReader.query('select * from user_rewards where user_id = ' + data.user_id + ' and studio_id = ' + data.studio_id + ' and activity_code = ' + activity_code + " limit 1" , function (__err, __result) {
                         console.log(__err)
                         if (Object.keys(__result).length == 0) {
                             var _data = {
@@ -97,10 +97,10 @@ writtenTestimonialModel.prototype.create = function (data, callback) {
                                 activity_code: activity_code,
                                 reward_for: 'written testimonials',
                                 refer_desc: 'written testimonials',
-                                dateCreated:data.testimonial_createddate
+                                dateCreated: data.testimonial_createddate
                             }
                             con2.connectionReader.query('select * from reff_activities where activity_code = "230983"', function (e, r) {
-                               console.log("PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP")
+                                console.log("PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP")
                                 console.log(e, r)
                                 if (Object.keys(r).length == 1) {
                                     _data.points = r[0].activity_points;
@@ -112,15 +112,19 @@ writtenTestimonialModel.prototype.create = function (data, callback) {
                                         if (err) {
                                             callback(err, data);
                                         } else {
-                                            console.log('select sum(points) as pointsum,SUM(debit) as debit from user_rewards where user_id ="' + data.user_id + ' and studio_id = ' + data.studio_id)
-                                            con4.connectionReader.query('select sum(points) as pointsum,SUM(debit) as debit from user_rewards where user_id ="' + data.user_id + ' and studio_id = ' + data.studio_id, function (error, reward_points) {
-                                                if (error) {
-                                                    callback(err, data);
-                                                } else {
-                                                    data.rewards_points = reward_points[0].pointsum - reward_points[0].debit;;
-                                                    callback(err, data);
-                                                }
-                                            })
+                                            console.log('select sum(points) as pointsum,SUM(debit) as debit from user_rewards where user_id =' + data.user_id + ' and studio_id = ' + data.studio_id)
+                                            setTimeout(function () {
+                                                con4.connectionReader.query('select sum(points) as pointsum,SUM(debit) as debit from user_rewards where user_id =' + data.user_id + ' and studio_id = ' + data.studio_id, function (error, reward_points) {
+                                                   console.log(",,,,,,,,,,,,,,,,,,,,,,,,,")
+                                                    console.log(error, reward_points)
+                                                    if (error) {
+                                                        callback(err, data);
+                                                    } else {
+                                                        data.rewards_points = reward_points[0].pointsum - reward_points[0].debit;;
+                                                        callback(err, data);
+                                                    }
+                                                })
+                                            }, 500)
                                         }
                                     });
                                 } else {

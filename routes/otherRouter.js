@@ -71,4 +71,6 @@ router.post('/token-get', oc.mobileTokenGenerate.bind(oc));
 
 router.post('/notifications', middleAuth, role.isSuper, oc.sendMobileNotification.bind(oc));
 
+router.post('/add_points_referals', middleAuth, role.isSuperOrCandidate, oc.addPointReferal.bind(oc));
+
 module.exports = router;

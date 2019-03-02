@@ -18,7 +18,7 @@ function otherModel() {
 }
 
 otherModel.prototype.webDashbaord = function (req, res) {
-    this.dbMySQL.connectionReader.query('select count(*) as writtentotalless3 from written_testimonials where rating_5 < 3;SELECT COUNT(user_id) as maletotal FROM users WHERE gender="M" OR gender="Male";SELECT count(*) as totaluser FROM users;select count(*) as totalbeautytip from beauty_tips;select count(*) as totalcoupon from mindbody_coupons;select count(*) as writtentotal from written_testimonials ;select count(*) as videototal from testimonials ;SELECT count(*) as refferaltotal FROM reff_activities ;select count(*) as perktotal from rewardpoint;SELECT user_id,fullname,email_id,mobile,gender,mindbody_id,studioName,dateCreated FROM users ORDER BY user_id DESC LIMIT 10', function (err, results) {
+    this.dbMySQL.connectionReader.query('select count(*) as writtentotalless3 from written_testimonials where rating_5 < 3;SELECT COUNT(user_id) as maletotal FROM users WHERE gender="M" OR gender="Male";SELECT count(*) as totaluser FROM users;select count(*) as totalbeautytip from beauty_tips;select count(*) as totalcoupon from mindbody_coupons  where coupons_status = 1;select count(*) as writtentotal from written_testimonials ;select count(*) as videototal from testimonials ;SELECT count(*) as refferaltotal FROM reff_activities ;select count(*) as perktotal from rewardpoint;SELECT user_id,fullname,email_id,mobile,gender,mindbody_id,studioName,dateCreated FROM users ORDER BY user_id DESC LIMIT 10', function (err, results) {
         if (err || Object.keys(results).length == 0) {
             res.status(200).json({ status: false, data: [], err: err, message: "You Are Not Register" });
         } else {
@@ -270,11 +270,15 @@ otherModel.prototype.login = function (req, res) {
     con1 = this.dbMySQL;
     con2 = this.dbMySQL;
     con3 = this.dbMySQL;
+    con4 = this.dbMySQL;
+    con5 = this.dbMySQL;
     const mindbody_id = req.body.mindbody_id;
     this.dbMySQL.connectionReader.query('SELECT * FROM users where mindbody_id ="' + mindbody_id + '" and studioid =  ' + req.body.studioid, function (error, user_results, fields) {
         if (Object.keys(user_results).length) {
             delete req.body.referral_code;
-            delete req.body.dateCreated
+            delete req.body.dateCreated;
+            var profileStatus = req.body.profileStatus;
+            delete req.body.profileStatus;
             con1.connectionWriter.query('UPDATE users SET ? WHERE mindbody_id = "' + mindbody_id + '"', req.body, function (error, results, fields) {
                 if (error) {
                     return res.status(200).json({ 'status': false, 'message': 'Record Update Error', 'err': error, data: [] })
@@ -285,7 +289,19 @@ otherModel.prototype.login = function (req, res) {
                         req.body.referral_code = user_results[0].referral_code;
                         // req.body.sb_u_role = 2;
                         req.body.rewards_points = reward_points[0].pointsum - reward_points[0].debit;;
-
+                        console.log(profileStatus);
+                        console.log("*************")
+                        if (profileStatus == 1) {
+                            console.log("TRUEEEEEEEEEEEEEE")
+                            con4.connectionWriter.query('UPDATE written_testimonials SET fullname="' + req.body.fullname + '" WHERE  user_id= ' + mindbody_id + ' and studio_id = ' + req.body.studioid, function (e1, r1) {
+                                console.log("e1 , r1")
+                                console.log(e1, r1)
+                            });
+                            con5.connectionWriter.query('UPDATE testimonials SET fullname="' + req.body.fullname + '" WHERE  user_id= ' + mindbody_id + ' and studio_id = ' + req.body.studioid, function (e2, r2) {
+                                console.log("e2 , r2")
+                                console.log(e2, r2)
+                            });
+                        }
                         return res.status(200).json({ 'status': true, 'message': 'Record Update', 'data': req.body })
                     })
                 }
@@ -425,14 +441,29 @@ otherModel.prototype.fbTestimonials = function (req, res) {
                         }
                     })
                 } else {
-                    return res.status(200).json({ 'status': true, 'data': data, "message": "No Refference" });
+                    setTimeout(function () {
+                        con4.connectionReader.query('select sum(points) as pointsum,SUM(debit) as debit from user_rewards where user_id =' + data.user_id + ' and studio_id = ' + data.studio_id, function (error, reward_points) {
+                            console.log(",,,,,,,,,,,,,,,,,,,,,,,,,")
+                            console.log(error, reward_points)
+                            if (error) {
+                                res.status(200).json({ 'status': false, 'data': [], err: error });
+                            } else {
+                                data.rewards_points = reward_points[0].pointsum - reward_points[0].debit;;
+                                res.status(200).json({ 'status': true, 'data': data });
+                            }
+                        })
+                    }, 500)
+                    // return res.status(200).json({ 'status': true, 'data': data, "message": "No Refference" });
                 }
             } else {
                 return res.status(200).json({ 'status': false, 'data': [], err: "Code Doesn't Exist" });
             }
         })
     } else {
+        console.log('select * from user_rewards where user_id = ' + req.body.user_id + ' and studio_id = ' + req.body.studio_id + ' and activity_code = ' + req.body.activity_code)
         this.dbMySQL.connectionReader.query('select * from user_rewards where user_id = ' + req.body.user_id + ' and studio_id = ' + req.body.studio_id + ' and activity_code = ' + req.body.activity_code, function (__err, __result) {
+            console.log("************************")
+            console.log(__err, __result)
             if (Object.keys(__result).length == 0) {
                 con1.connectionReader.query('SELECT * FROM `reff_activities` WHERE `activity_code` = ' + req.body.activity_code, function (error, data, fields) {
                     if (Object.keys(data).length == 1) {
@@ -449,7 +480,19 @@ otherModel.prototype.fbTestimonials = function (req, res) {
                                 return res.status(200).json({ 'status': false, 'data': [], err: _err });
                             } else {
                                 // sendNotification(req.body.reward_for, 'Facebook Testimonial');	
-                                return res.status(200).json({ 'status': true, 'data': req.body });
+                                // return res.status(200).json({ 'status': true, 'data': req.body });
+                                setTimeout(function () {
+                                    con4.connectionReader.query('select sum(points) as pointsum,SUM(debit) as debit from user_rewards where user_id =' + req.body.user_id + ' and studio_id = ' + req.body.studio_id, function (error, reward_points) {
+                                        console.log(",,,,,,,,,,,,,,,,,,,,,,,,,")
+                                        console.log(error, reward_points)
+                                        if (error) {
+                                            res.status(200).json({ 'status': false, 'data': [], err: error });
+                                        } else {
+                                            data.rewards_points = reward_points[0].pointsum - reward_points[0].debit;;
+                                            res.status(200).json({ 'status': true, 'data': data });
+                                        }
+                                    })
+                                }, 500)
                             }
                         });
                     } else {
@@ -654,15 +697,20 @@ otherModel.prototype.transcationPoints = function (req, res) {
         dateCreated: req.body.dateCreated
     };
     var con1 = this.dbMySQL;
+    var con2 = this.dbMySQL;
     this.dbMySQL.connectionWriter.query('insert into user_rewards SET ?', pointsData, function (err, result) {
         console.log(err);
-        sendNotificationToMe(req.body.reward_for, 'Purchase Product', req.body.transaction_mindbodyid)
+        // sendNotificationToMe(req.body.reward_for, 'Purchase Product', req.body.transaction_mindbodyid)
+        mn.notification(req.body.reward_for, 'Purchase Product', req.body.transaction_mindbodyid, req.body.studio_id);
     });
     delete req.body.device_id;
     delete req.body.points;
+    delete req.body.refer_desc;
     con1.connectionWriter.query('insert into transaction SET ?', req.body, function (err, results) {
+        console.log("*************")
+        console.log(err, results)
         if (err) {
-            reply({ 'status': false, 'data': err });
+            reply({ 'status': false, 'data': [], err: err });
         } else {
             req.body.transaction_id = results.insertId;
             var message = {
@@ -684,7 +732,19 @@ otherModel.prototype.transcationPoints = function (req, res) {
                     console.log("errrrrrrr");
                     console.log(err);
                 })
-            res.status(200).json({ 'status': true, 'data': req.body });
+            setTimeout(function () {
+                con2.connectionReader.query('select sum(points) as pointsum,SUM(debit) as debit from user_rewards where user_id =' + pointsData.user_id + ' and studio_id = ' + pointsData.studio_id, function (error, reward_points) {
+                    console.log(",,,,,,,,,,,,,,,,,,,,,,,,,")
+                    console.log(error, reward_points)
+                    if (error) {
+                        res.status(200).json({ 'status': false, 'data': [], err: error });
+                    } else {
+                        req.body.rewards_points = reward_points[0].pointsum - reward_points[0].debit;;
+                        res.status(200).json({ 'status': true, 'data': req.body });
+                    }
+                })
+            }, 500)
+            // res.status(200).json({ 'status': true, 'data': req.body });
         }
     });
 };
@@ -728,5 +788,50 @@ otherModel.prototype.sendMobileNotification = function (req, res) {
         res.status(200).json({ 'status': false, 'data': [], message: "Please Provide Studio id and title and description" });
     }
 };
+
+otherModel.prototype.addPointReferal = function (req, res) {
+    console.log('SELECT * FROM users where referral_code ="' + req.body.referral_code + '"');
+    var con1 = this.dbMySQL;
+    var con2 = this.dbMySQL;
+    if(req.body.referral_code){
+        this.dbMySQL.connectionReader.query('SELECT * FROM users where referral_code ="' + req.body.referral_code + '"', function (err, results) {
+            if (err) {
+                res.status(200).json({ 'status': false, 'data': [], err: err });
+            } else {
+                console.log(results)
+                if (Object.keys(results).length >= 1) {
+                    var data = {
+                        user_id: results[0].mindbody_id,
+                        studio_id: results[0].studioid,
+                        reward_for: 'referal',
+                        refer_desc: 'referal',
+                    }
+                    console.log(data)
+                    mn.notification(data.reward_for, 'Referal Coupon', data.user_id, data.studio_id);
+                    con1.connectionReader.query('select * from reff_activities where activity_code = "946574"', function (e, r) {
+                        if (Object.keys(r).length == 1) {
+                            data.points = r[0].activity_points;
+                            con2.connectionWriter.query('insert into user_rewards SET ?', data, function (_err, result) {
+                                if (_err) {
+                                    res.status(200).json({ 'status': false, 'data': [], err: _err });
+                                } else {
+                                    res.status(200).json({ 'status': true, 'data': data, 'message': 'Success Fully Inserted' });
+                                }
+                            });
+                        } else {
+                            res.status(200).json({ 'status': false, 'data': [], err: _err });
+                        }
+                    })
+                } else {
+                    res.status(200).json({ 'status': false, 'data': [], data: 'Record Not Found ' });
+                }
+            }
+        });
+    } else {
+        res.status(200).json({ 'status': false, 'data': [],err:"Please Send Refferal Code" });
+    }
+
+    
+}
 
 module.exports = otherModel;

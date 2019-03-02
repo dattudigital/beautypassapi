@@ -136,4 +136,8 @@ otherController.prototype.sendMobileNotification = function (req, res, next) {
     mpm.sendMobileNotification(req, res);
 };
 
+otherController.prototype.addPointReferal = function (req, res, next) {
+    mpm.addPointReferal(req, res);
+};
+
 module.exports = otherController;
