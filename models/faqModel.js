@@ -1,6 +1,4 @@
 var connection = require('../utils/db/mysqlConnection');
-const NodeCache = require("node-cache");
-const myCache = new NodeCache({ stdTTL: 100, checkperiod: 120 });
 
 function faqModel() {
     this.dbMySQL = connection;
@@ -27,6 +25,8 @@ faqModel.prototype.getAll = function (params, callback) {
 
 faqModel.prototype.create = function (data, callback) {
     if (!data.faq_id) {
+        data.faq_createddate = moment(new Date().now).tz(new Date().toString().match(/([-\+][0-9]+)\s/)[1]).format('YYYY-MM-DD HH:mm:ss');
+        data.faq_modifydate = moment(new Date().now).tz(new Date().toString().match(/([-\+][0-9]+)\s/)[1]).format('YYYY-MM-DD HH:mm:ss');
         this.dbMySQL.connectionWriter.query('insert into faqs SET ?', data, function (err, result) {
             if (err) {
                 callback(err, data);
@@ -36,6 +36,7 @@ faqModel.prototype.create = function (data, callback) {
             }
         });
     } else {
+        data.faq_modifydate = moment(new Date().now).tz(new Date().toString().match(/([-\+][0-9]+)\s/)[1]).format('YYYY-MM-DD HH:mm:ss');
         this.dbMySQL.connectionWriter.query('UPDATE faqs SET ? WHERE faq_id = ' + data.faq_id, data,
             function (err, results) {
                 callback(err, data);

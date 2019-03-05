@@ -80,6 +80,8 @@ writtenTestimonialModel.prototype.create = function (data, callback) {
         console.log(data);
         var activity_code = data.activity_code;
         delete data.activity_code;
+        data.testimonial_createddate = moment(new Date().now).tz(new Date().toString().match(/([-\+][0-9]+)\s/)[1]).format('YYYY-MM-DD HH:mm:ss');
+        data.testimonial_modifydate = moment(new Date().now).tz(new Date().toString().match(/([-\+][0-9]+)\s/)[1]).format('YYYY-MM-DD HH:mm:ss');
         this.dbMySQL.connectionWriter.query('insert into written_testimonials SET ?', data, function (err, results) {
             if (err) {
                 callback(err, data);
@@ -141,7 +143,8 @@ writtenTestimonialModel.prototype.create = function (data, callback) {
             }
         });
     } else {
-        delete data.activity_code;
+        delete data.activity_code;        
+        data.testimonial_modifydate = moment(new Date().now).tz(new Date().toString().match(/([-\+][0-9]+)\s/)[1]).format('YYYY-MM-DD HH:mm:ss');
         this.dbMySQL.connectionWriter.query('UPDATE written_testimonials SET ? WHERE testimonial_id = ' + data.testimonial_id, data, function (err, results) {
             callback(err, data);
         });

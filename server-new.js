@@ -6,12 +6,13 @@ var bodyParser = require('body-parser');
 var methodOverride = require('method-override');
 var cors = require('cors')
 var redis = require("redis");
+moment = require('moment-timezone');
+moment.tz.setDefault("America/Los_Angeles");
 
-console.log(config.PORT)
 app.listen(config.PORT, function () {
-    console.log("shapes")
-    console.log(config.PORT + "port")
+    console.log(config.PORT + "PORT ")
 });
+
 client = redis.createClient("6379", "127.0.0.1");
 
 client.on('connect', function () {
