@@ -31,7 +31,7 @@ redisCache.prototype.delete = function (url, callback) {
         client.del('/beauty-tips?status=1');
         client.del('/beauty-tips?type=2');
         client.del('/beauty-tips?type=1');
-        client.del('/beauty-tips?type=1&status=1');        
+        client.del('/beauty-tips?type=1&status=1');
     }
     if (url.match(/faqs/g)) {
         console.log("came to statussssssss")
@@ -58,6 +58,10 @@ redisCache.prototype.delete = function (url, callback) {
     }
     if (url.match(/written-testimonials/g)) {
         client.del('/written-testimonials?rating=3');
+    }
+    if (url.match(/mindbody-packages/g)) {
+        client.del('/mindbody-packages');
+        client.del('/mindbody-packages/url.id')
     }
     client.del(url);
 }

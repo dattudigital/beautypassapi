@@ -8,11 +8,15 @@ function mindbodyPackageController() {
 }
 
 mindbodyPackageController.prototype.getAll = function (req, res, next) {
-     controllerUtil.getAll(mpm, req, res, next);
+    controllerUtil.getAll(mpm, req, res, next);
 };
 
 mindbodyPackageController.prototype.create = function (req, res, next) {
     controllerUtil.create(mpm, req, res, next);
 };
+
+mindbodyPackageController.prototype.remove = function (req, res, next) {
+    controllerUtil.remove(mpm, req, res, next);
+}
 
 module.exports = mindbodyPackageController;
