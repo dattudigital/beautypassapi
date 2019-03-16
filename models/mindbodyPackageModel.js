@@ -5,10 +5,17 @@ function mindbodyCouponModel() {
 }
 
 mindbodyCouponModel.prototype.getAll = function (params, callback) {
-    this.dbMySQL.connectionReader.query(' select * from mindbody_packages ', function (err, results) {
+    this.dbMySQL.connectionReader.query('select * from mindbody_packages', function (err, results) {
         callback(err, results);
     });
 };
+
+mindbodyCouponModel.prototype.getById = function (data, id, callback) {
+    console.log('select * from mindbody_packages where studio_id=' + id)
+    this.dbMySQL.connectionReader.query('select * from mindbody_packages where studio_id=' + id, function (err, results) {
+        callback(err, results);
+    });
+}
 
 mindbodyCouponModel.prototype.create = function (data, callback) {
     if (!data.mb_pack_id) {

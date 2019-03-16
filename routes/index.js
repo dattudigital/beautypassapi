@@ -12,5 +12,7 @@ router.use('/beauty-tips', require('./beautyTipRouter'));
 router.use('/employees', require('./employeeRouter'));
 router.use('/faqs', require('./faqRouter'));
 router.use('/', require('./otherRouter'));
+router.use('/siteids',require('./siteRouter'))
+
 
 module.exports = router;

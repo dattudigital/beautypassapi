@@ -8,7 +8,12 @@ function mindbodyPackageController() {
 }
 
 mindbodyPackageController.prototype.getAll = function (req, res, next) {
+    console.log('%%%%%%%%%%%%%%%%%')
     controllerUtil.getAll(mpm, req, res, next);
+};
+
+mindbodyPackageController.prototype.getById = function (req, res, next) {
+    controllerUtil.getById(mpm, req, res, next);
 };
 
 mindbodyPackageController.prototype.create = function (req, res, next) {
